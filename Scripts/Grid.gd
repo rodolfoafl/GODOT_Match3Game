@@ -15,12 +15,14 @@ export (int) var y_offset
 export (PoolVector2Array) var empty_spaces
 export (PoolVector2Array) var ice_spaces
 export (PoolVector2Array) var lock_spaces
+export (PoolVector2Array) var concrete_spaces
 
 signal damage_ice
 signal create_ice
-
 signal damage_lock
 signal create_lock
+signal damage_concrete
+signal create_concrete
 
 var possible_pieces = [
 	preload("res://Scenes/BluePiece.tscn"),
@@ -49,6 +51,7 @@ func _ready():
 	spawn_pieces()
 	spawn_ice_obstacles()
 	spawn_lock_obstacles()
+	spawn_concrete_obstacles()
 	
 func _process(delta):
 	if(state == move):
@@ -62,6 +65,10 @@ func spawn_lock_obstacles():
 	for i in lock_spaces.size():
 		emit_signal("create_lock", lock_spaces[i])
 		
+func spawn_concrete_obstacles():
+	for i in concrete_spaces.size():
+		emit_signal("create_concrete", concrete_spaces[i])
+		
 func make_2d_array():
 	var array = []
 	for i in width:
@@ -73,6 +80,8 @@ func make_2d_array():
 func restricted_fill(place):
 	if(is_in_array(empty_spaces, place)):
 		return true
+	if(is_in_array(concrete_spaces, place)):
+		return true	
 	return false
 
 func restricted_move(place):
@@ -254,6 +263,7 @@ func destroy_matched():
 func damage_special(column, row):
 	emit_signal("damage_ice", Vector2(column, row))
 	emit_signal("damage_lock", Vector2(column, row))
+	check_concrete(column, row)
 
 func collapse_columns():
 	for i in width:
@@ -266,6 +276,23 @@ func collapse_columns():
 						all_pieces[i][k] = null
 						break
 	get_parent().get_node("RefillTimer").start()
+
+func check_concrete(column, row):
+	if(column < width - 1):
+		emit_signal("damage_concrete", Vector2(column + 1, row))
+	if(column > 0):
+		emit_signal("damage_concrete", Vector2(column - 1, row))	
+	if(row < height - 1):
+		emit_signal("damage_concrete", Vector2(column, row + 1))
+	if(row > 0):
+		emit_signal("damage_concrete", Vector2(column, row - 1))
+			
+
+func remove_from_array(array, item):
+	for i in range(array.size() -1, -1, -1):
+		if(array[i] == item):
+			array.remove(i)
+	return array
 	
 func _on_DestroyTimer_timeout():
 	destroy_matched()
@@ -277,6 +304,7 @@ func _on_RefillTimer_timeout():
 	spawn_pieces()
 
 func _on_LockHolder_remove_lock(place):
-	for i in range(lock_spaces.size() -1, -1, -1):
-		if(lock_spaces[i] == place):
-			lock_spaces.remove(i)
+	lock_spaces = remove_from_array(lock_spaces, place)
+
+func _on_ConcreteHolder_remove_concrete(place):
+	concrete_spaces = remove_from_array(concrete_spaces, place)

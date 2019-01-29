@@ -26,10 +26,10 @@ func _on_Grid_create_ice(grid_position):
 
 
 func _on_Grid_damage_ice(grid_position):
-	var ice_obstacle = ice_pieces[grid_position.x][grid_position.y]
-	
-	if(ice_obstacle != null):
-		ice_obstacle.take_damage(1)
-		if(ice_obstacle.health <= 0):
-			ice_pieces[grid_position.x][grid_position.y].queue_free()
-			ice_pieces[grid_position.x][grid_position.y] = null
+	if(ice_pieces.size() != 0):
+		var ice_obstacle = ice_pieces[grid_position.x][grid_position.y]	
+		if(ice_obstacle != null):
+			ice_obstacle.take_damage(1)
+			if(ice_obstacle.health <= 0):
+				ice_pieces[grid_position.x][grid_position.y].queue_free()
+				ice_pieces[grid_position.x][grid_position.y] = null

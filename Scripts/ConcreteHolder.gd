@@ -29,11 +29,11 @@ func _on_Grid_create_concrete(grid_position):
 
 
 func _on_Grid_damage_concrete(grid_position):
-	var concrete_obstacle = concrete_pieces[grid_position.x][grid_position.y]
-	
-	if(concrete_obstacle != null):
-		concrete_obstacle.take_damage(1)
-		if(concrete_obstacle.health <= 0):
-			concrete_pieces[grid_position.x][grid_position.y].queue_free()
-			concrete_pieces[grid_position.x][grid_position.y] = null
-			emit_signal("remove_concrete", grid_position)
+	if(concrete_pieces.size() != 0):
+		var concrete_obstacle = concrete_pieces[grid_position.x][grid_position.y]	
+		if(concrete_obstacle != null):
+			concrete_obstacle.take_damage(1)
+			if(concrete_obstacle.health <= 0):
+				concrete_pieces[grid_position.x][grid_position.y].queue_free()
+				concrete_pieces[grid_position.x][grid_position.y] = null
+				emit_signal("remove_concrete", grid_position)

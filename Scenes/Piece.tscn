@@ -6,6 +6,9 @@
 
 script = ExtResource( 1 )
 color = null
+row_bomb_texture = null
+column_bomb_texture = null
+adjacent_bomb_texture = null
 tween_speed = 0.25
 
 [node name="Sprite" type="Sprite" parent="." index="0"]

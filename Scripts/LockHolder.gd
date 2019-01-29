@@ -29,11 +29,11 @@ func _on_Grid_create_lock(grid_position):
 
 
 func _on_Grid_damage_lock(grid_position):
-	var lock_obstacle = lock_pieces[grid_position.x][grid_position.y]
-	
-	if(lock_obstacle != null):
-		lock_obstacle.take_damage(1)
-		if(lock_obstacle.health <= 0):
-			lock_pieces[grid_position.x][grid_position.y].queue_free()
-			lock_pieces[grid_position.x][grid_position.y] = null
-			emit_signal("remove_lock", grid_position)
+	if(lock_pieces.size() != 0):
+		var lock_obstacle = lock_pieces[grid_position.x][grid_position.y]	
+		if(lock_obstacle != null):
+			lock_obstacle.take_damage(1)
+			if(lock_obstacle.health <= 0):
+				lock_pieces[grid_position.x][grid_position.y].queue_free()
+				lock_pieces[grid_position.x][grid_position.y] = null
+				emit_signal("remove_lock", grid_position)

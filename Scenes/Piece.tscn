@@ -1,6 +1,7 @@
-[gd_scene load_steps=2 format=2]
+[gd_scene load_steps=3 format=2]
 
 [ext_resource path="res://Scripts/Piece.gd" type="Script" id=1]
+[ext_resource path="res://Art/Pieces/Rainbow.png" type="Texture" id=2]
 
 [node name="Piece" type="Node2D"]
 
@@ -9,6 +10,7 @@ color = null
 row_bomb_texture = null
 column_bomb_texture = null
 adjacent_bomb_texture = null
+color_bomb_texture = ExtResource( 2 )
 tween_speed = 0.25
 
 [node name="Sprite" type="Sprite" parent="." index="0"]

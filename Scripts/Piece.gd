@@ -4,12 +4,14 @@ export (String) var color
 export (Texture) var row_bomb_texture
 export (Texture) var column_bomb_texture
 export (Texture) var adjacent_bomb_texture
+export (Texture) var color_bomb_texture
 
 export (float) var tween_speed
 
 var is_row_bomb = false
 var is_column_bomb = false
 var is_adjacent_bomb = false
+var is_color_bomb = false
 
 var move_tween
 var matched = false
@@ -39,3 +41,9 @@ func create_adjacent_bomb():
 	is_adjacent_bomb = true
 	$Sprite.texture = adjacent_bomb_texture
 	$Sprite.modulate = Color(1, 1, 1, 1)
+
+func create_color_bomb():
+	is_color_bomb = true
+	$Sprite.texture = color_bomb_texture
+	$Sprite.modulate = Color(1, 1, 1, 1)
+	color = "Color"

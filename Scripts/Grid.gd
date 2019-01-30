@@ -33,7 +33,7 @@ var possible_pieces = [
 	preload("res://Scenes/GreenPiece.tscn"),
 	preload("res://Scenes/YellowPiece.tscn"),
 	preload("res://Scenes/LightGreenPiece.tscn"),
-	#preload("res://Scenes/OrangePiece.tscn"),
+	preload("res://Scenes/OrangePiece.tscn"),
 	#preload("res://Scenes/PinkPiece.tscn")
 ]
 var all_pieces = []
@@ -52,6 +52,12 @@ var first_touch = Vector2(0, 0)
 var last_touch = Vector2(0, 0)
 var controlling = false
 
+signal update_score
+export (int) var piece_value
+var streak = 1
+
+var audio_player
+
 func _ready():
 	state = move
 	randomize()
@@ -60,7 +66,10 @@ func _ready():
 	spawn_ice_obstacles()
 	spawn_lock_obstacles()
 	spawn_concrete_obstacles()
-	spawn_slime_obstacles()
+	spawn_slime_obstacles()	
+	
+	audio_player = get_parent().get_node("AudioPlayer")
+	audio_player.stream = load("res://SFX/piece_matched.ogg")
 	
 func _process(delta):
 	if(state == move):
@@ -169,6 +178,17 @@ func swap_pieces(column, row, direction):
 	
 	if(first_piece != null && other_piece != null):	
 		if(!restricted_move(Vector2(column, row)) && !restricted_move(Vector2(column, row) + direction)):
+			if(is_color_bomb(first_piece, other_piece)):
+				if(first_piece.color == "Color" && other_piece.color == "Color"):
+					clear_board()			
+				if(first_piece.color == "Color"):
+					match_color(other_piece)
+					match_and_dim(first_piece)
+					add_to_array(Vector2(column, row), current_matches)
+				else:
+					match_color(first_piece)
+					match_and_dim(other_piece)
+					add_to_array(Vector2(column + direction.x, row + direction.y), current_matches)
 			initialize_swap_pieces(first_piece, other_piece, Vector2(column, row), direction)
 			state = wait
 			all_pieces[column][row] = other_piece
@@ -177,6 +197,27 @@ func swap_pieces(column, row, direction):
 			other_piece.move(grid_to_pixel(column, row))
 			if(!move_checked):
 				find_matches()
+
+func is_color_bomb(piece_one, piece_two):
+	if(piece_one.color == "Color" || piece_two.color == "Color"):
+		return true
+	return false
+				
+func match_color(piece):
+	for i in width:
+		for j in height:
+			if(all_pieces[i][j] != null):
+				if(all_pieces[i][j].color == piece.color):
+					match_and_dim(all_pieces[i][j])
+					add_to_array(Vector2(i, j), all_pieces)
+				
+func clear_board():
+	for i in width:
+		for j in height:
+			if(all_pieces[i][j] != null):
+				match_and_dim(all_pieces[i][j])
+				add_to_array(Vector2(i, j), all_pieces)
+				
 				
 func initialize_swap_pieces(first_piece, second_piece, place, direction):
 	piece_one = first_piece
@@ -191,6 +232,7 @@ func swap_back():
 	move_checked = false
 
 func after_refill():
+	streak += 1
 	for i in width:
 		for j in height:
 			if(!is_piece_null(i, j)):
@@ -199,10 +241,14 @@ func after_refill():
 					return
 	if(!damaged_slime && !first_round):
 		generate_slime()
+	if(is_deadlocked()):
+		print("Deadlocked!")	
+		
 	first_round = false
 	damaged_slime = false
-	move_checked = false
-	state = move	
+	move_checked = false	
+	state = move
+	streak = 1	
 	
 func generate_slime():
 	if(slime_spaces.size() > 0):
@@ -295,16 +341,16 @@ func is_in_grid(grid_position):
 func find_matches():
 	for i in width:
 		for j in height:
-			if(!is_piece_null(i, j)):
-				var current_color = all_pieces[i][j].color
-				if(i > 0 && i < width - 1):
-					if(!is_piece_null(i - 1, j) && !is_piece_null(i + 1, j)):
-						if(all_pieces[i - 1][j].color == current_color && all_pieces[i + 1][j].color == current_color):
-							match_in_axis(i, j, all_pieces, "h")
-				if(j > 0 && j < height - 1):
-					if(!is_piece_null(i, j - 1) && !is_piece_null(i, j + 1)):
-						if(all_pieces[i][j - 1].color == current_color && all_pieces[i][j + 1].color == current_color):
-							match_in_axis(i, j, all_pieces, "v")
+			#if(!is_piece_null(i, j)):
+			var current_color = all_pieces[i][j].color
+			if(i > 0 && i < width - 1):
+				if(!is_piece_null(i - 1, j) && !is_piece_null(i + 1, j)):
+					if(all_pieces[i - 1][j].color == current_color && all_pieces[i + 1][j].color == current_color):
+						match_in_axis(i, j, all_pieces, "h")
+			if(j > 0 && j < height - 1):
+				if(!is_piece_null(i, j - 1) && !is_piece_null(i, j + 1)):
+					if(all_pieces[i][j - 1].color == current_color && all_pieces[i][j + 1].color == current_color):
+						match_in_axis(i, j, all_pieces, "v")
 											
 	get_bombed_pieces()
 	get_parent().get_node("DestroyTimer").start()
@@ -357,38 +403,28 @@ func find_bombs():
 				row_matched += 1
 				
 		if(column_matched == 4):
-			print("row bomb")
 			make_bomb(row_bomb, current_color)
-
 		if(row_matched == 4):
-			print("column bomb")
 			make_bomb(column_bomb, current_color)
-
 		if(column_matched == 3 && row_matched == 3):
-			print("adjacent bomb")
 			make_bomb(adjacent_bomb, current_color)
-
-		if(column_matched == 5 && row_matched == 5):
-			print("color bomb")
+		if(column_matched == 5 || row_matched == 5):
+			make_bomb(color_bomb, current_color)
 
 func make_bomb(bomb_type, color):
 	# CURRENTLY, ONLY WHEN THE PLAYER SWAP PIECES BOMBS ARE CREATED.
 	# IDEALLY, IT SHOULD ALSO HAPPEN WHEN THE GRIND REFILLS ITSELF.
-	print("--make_bomb--")
 	for i in current_matches.size():
 		var current_column = current_matches[i].x
 		var current_row = current_matches[i].y
 		if(all_pieces[current_column][current_row] == piece_one && piece_one.color == color):
-			print("changing piece_one")
 			piece_one.matched = false
 			change_bomb(bomb_type, piece_one)
 		if(all_pieces[current_column][current_row] == piece_two && piece_two.color == color):
-			print("changing piece_two")
 			piece_two.matched = false
 			change_bomb(bomb_type, piece_two)
 			
 func change_bomb(bomb_type, piece):
-	print("--change_bomb--")
 	match(bomb_type):
 		column_bomb:
 			piece.create_column_bomb()
@@ -396,8 +432,9 @@ func change_bomb(bomb_type, piece):
 			piece.create_row_bomb()
 		adjacent_bomb:
 			piece.create_adjacent_bomb()
+		color_bomb:
+			piece.create_color_bomb()
 	
-
 func destroy_matched():
 	find_bombs()
 	var was_matched = false	
@@ -405,10 +442,12 @@ func destroy_matched():
 		for j in height:
 			if(!is_piece_null(i, j)):
 				if(all_pieces[i][j].matched):
+					audio_player.play()
 					damage_special(i, j)
 					was_matched = true
 					all_pieces[i][j].queue_free()
 					all_pieces[i][j] = null
+					emit_signal("update_score", piece_value * streak)
 	move_checked = true
 	if(was_matched):
 		get_parent().get_node("CollapseTimer").start()
@@ -463,6 +502,46 @@ func remove_from_array(array, item):
 		if(array[i] == item):
 			array.remove(i)
 	return array
+	
+func switch_pieces(column, row, direction):
+	var holder = all_pieces[column + direction.x][row + direction.y]
+	all_pieces[column + direction.x][row + direction.y] = all_pieces[column][row]
+	all_pieces[column][row] = holder
+
+func is_deadlocked():
+	for i in width:
+		for j in height:
+			if(all_pieces[i][j] != null):
+				if(i < width - 1):
+					if(switch_and_check(i, j, Vector2(1, 0))):
+						return false
+				if(j < height - 1):
+					if(switch_and_check(i, j, Vector2(0, 1))):
+						return false
+	return true				
+				
+func switch_and_check(column, row, direction):
+	switch_pieces(column, row, direction)
+	if(check_for_matches()):
+		switch_pieces(column, row, direction)
+		return true
+	switch_pieces(column, row, direction)
+	return false
+	
+func check_for_matches():
+	for i in width:
+		for j in height:
+			if(all_pieces[i][j] != null):
+				if(i < width - 2):				
+					if(all_pieces[i + 1][j] != null && all_pieces[i + 2][j] != null):
+						if(all_pieces[i + 1][j].color == all_pieces[i][j].color && all_pieces[i + 2][j].color == all_pieces[i][j].color):
+							return true
+				if(j < height - 2):
+					if(all_pieces[i][j + 1] != null && all_pieces[i][j + 2] != null):
+						if(all_pieces[i][j + 1].color == all_pieces[i][j].color && all_pieces[i][j + 2].color == all_pieces[i][j].color):
+							return true
+	
+	return false
 	
 func _on_DestroyTimer_timeout():
 	destroy_matched()

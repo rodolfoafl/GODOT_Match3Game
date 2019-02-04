@@ -242,7 +242,8 @@ func after_refill():
 	if(!damaged_slime && !first_round):
 		generate_slime()
 	if(is_deadlocked()):
-		print("Deadlocked!")	
+		print("Deadlocked!")
+		#shuffle_board()	
 		
 	first_round = false
 	damaged_slime = false
@@ -501,7 +502,7 @@ func remove_from_array(array, item):
 	for i in range(array.size() -1, -1, -1):
 		if(array[i] == item):
 			array.remove(i)
-	return array
+	return array	
 	
 func switch_pieces(column, row, direction):
 	var holder = all_pieces[column + direction.x][row + direction.y]
@@ -511,14 +512,38 @@ func switch_pieces(column, row, direction):
 func is_deadlocked():
 	for i in width:
 		for j in height:
-			if(all_pieces[i][j] != null):
+			if(!is_piece_null(i, j)):
 				if(i < width - 1):
 					if(switch_and_check(i, j, Vector2(1, 0))):
 						return false
 				if(j < height - 1):
 					if(switch_and_check(i, j, Vector2(0, 1))):
 						return false
-	return true				
+	return true	
+	
+func shuffle_board():
+	pass
+#	var new_grid = []
+#
+#	for i in width:
+#		new_grid.append([])
+#		for j in height:
+#			if(!is_piece_null(i, j)):
+#				new_grid[i].append(all_pieces[i][j])
+#
+#	for i in width:		
+#		for j in height:		
+#			var index = floor(rand_range(0, new_grid.size()))		
+#			var piece = new_grid[index][j]
+#			print("\npiece: " + str(piece))
+#
+#			piece.position = grid_to_pixel(i, j + y_offset)
+#			piece.move(grid_to_pixel(i, j))
+#			all_pieces[i][j] = new_grid[index][j]
+#			new_grid.remove(piece)
+##
+#	if(is_deadlocked()):
+#		shuffle_board()			
 				
 func switch_and_check(column, row, direction):
 	switch_pieces(column, row, direction)

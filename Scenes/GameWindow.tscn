@@ -9,7 +9,7 @@
 [ext_resource path="res://Scripts/ConcreteHolder.gd" type="Script" id=7]
 [ext_resource path="res://Scripts/SlimeHolder.gd" type="Script" id=8]
 
-[node name="GameWindow" type="Node2D" index="0"]
+[node name="GameWindow" type="Node2D"]
 
 [node name="Background" type="TextureRect" parent="." index="0"]
 

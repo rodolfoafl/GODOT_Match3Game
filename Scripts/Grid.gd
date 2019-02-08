@@ -28,6 +28,8 @@ signal create_concrete
 signal damage_slime
 signal create_slime
 
+var color_bomb_used = false
+
 var possible_pieces = [
 	preload("res://Scenes/BluePiece.tscn"),
 	preload("res://Scenes/GreenPiece.tscn"),
@@ -38,6 +40,9 @@ var possible_pieces = [
 ]
 var all_pieces = []
 var current_matches = []
+
+
+var particle_effect = preload("res://Scenes/Particle.tscn")
 
 var piece_one = null
 var piece_two = null
@@ -200,6 +205,7 @@ func swap_pieces(column, row, direction):
 
 func is_color_bomb(piece_one, piece_two):
 	if(piece_one.color == "Color" || piece_two.color == "Color"):
+		color_bomb_used = true
 		return true
 	return false
 				
@@ -248,6 +254,7 @@ func after_refill():
 	first_round = false
 	damaged_slime = false
 	move_checked = false	
+	color_bomb_used = false
 	state = move
 	streak = 1	
 	
@@ -448,6 +455,7 @@ func destroy_matched():
 					was_matched = true
 					all_pieces[i][j].queue_free()
 					all_pieces[i][j] = null
+					create_effect(particle_effect, i, j)
 					emit_signal("update_score", piece_value * streak)
 	move_checked = true
 	if(was_matched):
@@ -455,6 +463,11 @@ func destroy_matched():
 	else:
 		swap_back()
 	current_matches.clear()
+
+func create_effect(effect, column, row):
+	var current = effect.instance()
+	current.position = grid_to_pixel(column, row)
+	add_child(current)
 
 func add_to_array(value, array_to_add):
 	if(!array_to_add.has(value)):

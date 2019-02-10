@@ -9,7 +9,7 @@
 [ext_resource path="res://Scripts/ConcreteHolder.gd" type="Script" id=7]
 [ext_resource path="res://Scripts/SlimeHolder.gd" type="Script" id=8]
 
-[node name="GameWindow" type="Node2D"]
+[node name="GameWindow" type="Node2D" index="0"]
 
 [node name="Background" type="TextureRect" parent="." index="0"]
 
@@ -66,7 +66,16 @@ ice_spaces = PoolVector2Array(  )
 lock_spaces = PoolVector2Array(  )
 concrete_spaces = PoolVector2Array(  )
 slime_spaces = PoolVector2Array(  )
+current_counter_value = 10
+is_moves = true
 piece_value = 10
+
+[node name="Timer" type="Timer" parent="Grid" index="0"]
+
+process_mode = 1
+wait_time = 1.0
+one_shot = false
+autostart = false
 
 [node name="IceHolder" type="Node2D" parent="." index="4"]
 
@@ -131,7 +140,11 @@ _sections_unfolded = [ "Material", "Transform", "Visibility", "Z Index" ]
 
 [connection signal="damage_slime" from="Grid" to="SlimeHolder" method="_on_Grid_damage_slime"]
 
+[connection signal="update_counter" from="Grid" to="TopUI" method="_on_Grid_update_counter"]
+
 [connection signal="update_score" from="Grid" to="TopUI" method="_on_Grid_update_score"]
+
+[connection signal="timeout" from="Grid/Timer" to="Grid" method="_on_Timer_timeout"]
 
 [connection signal="remove_lock" from="LockHolder" to="Grid" method="_on_LockHolder_remove_lock"]
 

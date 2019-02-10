@@ -19,6 +19,9 @@ export (PoolVector2Array) var lock_spaces
 export (PoolVector2Array) var concrete_spaces
 export (PoolVector2Array) var slime_spaces
 
+export (int) var current_counter_value
+export (bool) var is_moves 
+
 signal damage_ice
 signal create_ice
 signal damage_lock
@@ -27,6 +30,8 @@ signal damage_concrete
 signal create_concrete
 signal damage_slime
 signal create_slime
+
+signal update_counter
 
 var color_bomb_used = false
 
@@ -41,7 +46,7 @@ var possible_pieces = [
 var all_pieces = []
 var current_matches = []
 
-
+var animated_effect = preload("res://Scenes/ExplosionEffect.tscn")
 var particle_effect = preload("res://Scenes/Particle.tscn")
 
 var piece_one = null
@@ -72,6 +77,10 @@ func _ready():
 	spawn_lock_obstacles()
 	spawn_concrete_obstacles()
 	spawn_slime_obstacles()	
+	
+	emit_signal("update_counter", current_counter_value)
+	if(!is_moves):
+		$Timer.start()
 	
 	audio_player = get_parent().get_node("AudioPlayer")
 	audio_player.stream = load("res://SFX/piece_matched.ogg")
@@ -141,7 +150,6 @@ func spawn_pieces():
 					piece.position = grid_to_pixel(i, j + y_offset)
 					piece.move(grid_to_pixel(i, j))
 					all_pieces[i][j] = piece
-	after_refill()
 	
 func grid_to_pixel(column, row):	
 	var new_x = x_start + offset * column
@@ -237,14 +245,34 @@ func swap_back():
 	state = move
 	move_checked = false
 
-func after_refill():
+func refill_columns():
 	streak += 1
+	for i in width:
+		for j in height:
+			if(!restricted_fill(Vector2(i, j))):					
+				if(is_piece_null(i, j)):			
+					var rand = floor(rand_range(0, possible_pieces.size()))
+					var piece = possible_pieces[rand].instance()
+					var loops = 0
+					while(match_at(i, j, piece.color) && loops < 100):
+						rand = floor(rand_range(0, possible_pieces.size()))
+						loops += 1
+						piece = possible_pieces[rand].instance()			
+					
+					add_child(piece)
+					piece.position = grid_to_pixel(i, j + y_offset)
+					piece.move(grid_to_pixel(i, j))
+					all_pieces[i][j] = piece
+	after_refill()
+
+func after_refill():	
 	for i in width:
 		for j in height:
 			if(!is_piece_null(i, j)):
 				if(match_at(i,j, all_pieces[i][j].color)):
 					find_matches()
 					return
+					
 	if(!damaged_slime && !first_round):
 		generate_slime()
 	if(is_deadlocked()):
@@ -257,6 +285,10 @@ func after_refill():
 	color_bomb_used = false
 	state = move
 	streak = 1	
+	
+	if(is_moves):
+		_on_Timer_timeout()
+
 	
 func generate_slime():
 	if(slime_spaces.size() > 0):
@@ -456,6 +488,7 @@ func destroy_matched():
 					all_pieces[i][j].queue_free()
 					all_pieces[i][j] = null
 					create_effect(particle_effect, i, j)
+					create_effect(animated_effect, i, j)
 					emit_signal("update_score", piece_value * streak)
 	move_checked = true
 	if(was_matched):
@@ -588,7 +621,7 @@ func _on_CollapseTimer_timeout():
 	collapse_columns()
 
 func _on_RefillTimer_timeout():
-	spawn_pieces()
+	refill_columns()
 
 func _on_LockHolder_remove_lock(place):
 	lock_spaces = remove_from_array(lock_spaces, place)
@@ -599,3 +632,16 @@ func _on_ConcreteHolder_remove_concrete(place):
 func _on_SlimeHolder_remove_slime(place):
 	damaged_slime = true
 	slime_spaces = remove_from_array(slime_spaces, place)
+
+func _on_Timer_timeout():
+	current_counter_value -= 1
+	emit_signal("update_counter")
+	
+	print(current_counter_value)
+	if(current_counter_value == 0):
+		set_game_over()
+		$Timer.stop()
+	
+func set_game_over():
+	print("Game Over")
+	state = wait

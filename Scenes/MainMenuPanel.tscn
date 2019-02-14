@@ -9,10 +9,6 @@
 
 script = ExtResource( 2 )
 
-[node name="MarginContainer" parent="." index="0"]
-
-editor/display_folded = false
-
 [node name="Graphic" parent="MarginContainer/VBoxContainer" index="0"]
 
 margin_bottom = 488.0
@@ -28,7 +24,7 @@ margin_top = 0.0
 margin_right = 0.0
 margin_bottom = 0.0
 text = "MATCH 3"
-_sections_unfolded = [ "Anchor", "Margin", "Rect" ]
+_sections_unfolded = [ "Anchor", "Margin", "Rect", "custom_colors", "custom_fonts" ]
 
 [node name="Buttons" parent="MarginContainer/VBoxContainer" index="1"]
 

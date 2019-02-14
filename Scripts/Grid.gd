@@ -33,6 +33,8 @@ signal create_slime
 
 signal update_counter
 
+signal game_over
+
 var color_bomb_used = false
 
 var possible_pieces = [
@@ -643,5 +645,6 @@ func _on_Timer_timeout():
 		$Timer.stop()
 	
 func set_game_over():
-	print("Game Over")
+	print("game over!")
+	emit_signal("game_over")
 	state = wait

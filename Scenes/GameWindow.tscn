@@ -1,4 +1,4 @@
-[gd_scene load_steps=13 format=2]
+[gd_scene load_steps=15 format=2]
 
 [ext_resource path="res://Art/UI/background 2.png" type="Texture" id=1]
 [ext_resource path="res://Scenes/TopUI.tscn" type="PackedScene" id=2]
@@ -12,8 +12,10 @@
 [ext_resource path="res://Scenes/QuitMenu.tscn" type="PackedScene" id=10]
 [ext_resource path="res://Scripts/GoalHolder.gd" type="Script" id=11]
 [ext_resource path="res://Scenes/Goal.tscn" type="PackedScene" id=12]
+[ext_resource path="res://Art/Pieces/Blue Piece.png" type="Texture" id=13]
+[ext_resource path="res://Art/Pieces/Pink Piece.png" type="Texture" id=14]
 
-[node name="GameWindow" type="Node2D" index="0"]
+[node name="GameWindow" type="Node2D"]
 
 [node name="Background" type="TextureRect" parent="." index="0"]
 
@@ -141,20 +143,19 @@ script = ExtResource( 11 )
 
 [node name="Goal" parent="GoalHolder" index="0" instance=ExtResource( 12 )]
 
+goal_texture = ExtResource( 13 )
 max_needed = 3
 goal_string = "Blue"
 
 [node name="Goal2" parent="GoalHolder" index="1" instance=ExtResource( 12 )]
 
+goal_texture = ExtResource( 14 )
 max_needed = 3
 goal_string = "Pink"
 
-[node name="Goal3" parent="GoalHolder" index="2" instance=ExtResource( 12 )]
-
-max_needed = 10
-goal_string = "White"
-
 [connection signal="check_goal" from="Grid" to="GoalHolder" method="_on_Grid_check_goal"]
+
+[connection signal="check_goal" from="Grid" to="TopUI" method="_on_Grid_check_goal"]
 
 [connection signal="create_concrete" from="Grid" to="ConcreteHolder" method="_on_Grid_create_concrete"]
 
@@ -193,5 +194,7 @@ goal_string = "White"
 [connection signal="timeout" from="CollapseTimer" to="Grid" method="_on_CollapseTimer_timeout"]
 
 [connection signal="timeout" from="RefillTimer" to="Grid" method="_on_RefillTimer_timeout"]
+
+[connection signal="create_goal" from="GoalHolder" to="TopUI" method="_on_GoalHolder_create_goal"]
 
 

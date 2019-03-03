@@ -39,9 +39,12 @@ func _on_Grid_setup_max_score(max_score):
 
 func _on_GoalHolder_create_goal(new_max, new_texture, new_value):
 	create_goal(new_max, new_texture, new_value)
-	pass # replace with function body
 
 
 func _on_Grid_check_goal(goal_type):
+	for i in goal_container.get_child_count():
+		goal_container.get_child(i).update_goal_values(goal_type)
+
+func _on_IceHolder_break_ice(goal_type):
 	for i in goal_container.get_child_count():
 		goal_container.get_child(i).update_goal_values(goal_type)

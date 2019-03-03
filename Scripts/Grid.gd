@@ -386,10 +386,10 @@ func find_adjacent_pieces(column, row):
 		for j in range(-1, 2):
 			if(is_in_grid(Vector2(column + i, row + j))):
 				if(!is_piece_null(column + i, row + j) && !is_piece_sinker(column + i, row + j)):
-					if(all_pieces[column + i][row + j].is_column_bomb):
-						match_all_in_column(column + i)
-					if(all_pieces[column + i][row + j].is_row_bomb):
-						match_all_in_row(row + j)
+					if(all_pieces[column][row + j].is_column_bomb):
+						match_all_in_column(i)
+					if(all_pieces[column + i][row].is_row_bomb):
+						match_all_in_row(j)
 					all_pieces[column + i][row + j].matched = true
 
 func destroy_sinkers():
@@ -422,7 +422,7 @@ func find_matches():
 	for i in width:
 		for j in height:
 			#if(!is_piece_null(i, j)):
-			if(!is_piece_sinker(i, j)):
+			if(!is_piece_sinker(i, j) && !restricted_fill(Vector2(i, j))):
 				var current_color = all_pieces[i][j].color
 				if(i > 0 && i < width - 1):
 					if(!is_piece_null(i - 1, j) && !is_piece_null(i + 1, j)):
@@ -688,4 +688,7 @@ func _on_Timer_timeout():
 func set_game_over():
 	print("game over!")
 	emit_signal("game_over")
+	state = wait
+
+func _on_GoalHolder_game_won():
 	state = wait

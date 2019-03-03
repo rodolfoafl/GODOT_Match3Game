@@ -12,10 +12,10 @@
 [ext_resource path="res://Scenes/QuitMenu.tscn" type="PackedScene" id=10]
 [ext_resource path="res://Scripts/GoalHolder.gd" type="Script" id=11]
 [ext_resource path="res://Scenes/Goal.tscn" type="PackedScene" id=12]
-[ext_resource path="res://Art/Pieces/Blue Piece.png" type="Texture" id=13]
-[ext_resource path="res://Art/Pieces/Pink Piece.png" type="Texture" id=14]
+[ext_resource path="res://Art/Obstacles/Ice.png" type="Texture" id=13]
+[ext_resource path="res://Scenes/GameWinScreen.tscn" type="PackedScene" id=14]
 
-[node name="GameWindow" type="Node2D"]
+[node name="GameWindow" type="Node2D" index="0"]
 
 [node name="Background" type="TextureRect" parent="." index="0"]
 
@@ -68,16 +68,16 @@ x_start = 64
 y_start = 800
 offset = 64
 y_offset = 2
-empty_spaces = PoolVector2Array(  )
-ice_spaces = PoolVector2Array(  )
+empty_spaces = PoolVector2Array( 3, 9, 4, 9, 3, 8, 4, 8 )
+ice_spaces = PoolVector2Array( 0, 0, 1, 0, 6, 0, 7, 0, 0, 1, 7, 1, 2, 3, 3, 3, 4, 3, 5, 3, 2, 4, 3, 4, 4, 4, 5, 4, 0, 7, 1, 7, 6, 7, 7, 7, 0, 8, 1, 8, 6, 8, 7, 8 )
 lock_spaces = PoolVector2Array(  )
 concrete_spaces = PoolVector2Array(  )
 slime_spaces = PoolVector2Array(  )
-current_counter_value = 50
+current_counter_value = 30
 is_moves = true
 sinker_piece = ExtResource( 5 )
-sinkers_in_scene = true
-max_sinkers = 2
+sinkers_in_scene = false
+max_sinkers = 0
 max_score = 5000
 piece_value = 10
 
@@ -91,6 +91,7 @@ autostart = false
 [node name="IceHolder" type="Node2D" parent="." index="4"]
 
 script = ExtResource( 6 )
+value = "Ice"
 
 [node name="LockHolder" type="Node2D" parent="." index="5"]
 
@@ -144,18 +145,14 @@ script = ExtResource( 11 )
 [node name="Goal" parent="GoalHolder" index="0" instance=ExtResource( 12 )]
 
 goal_texture = ExtResource( 13 )
-max_needed = 3
-goal_string = "Blue"
+max_needed = 22
+goal_string = "Ice"
 
-[node name="Goal2" parent="GoalHolder" index="1" instance=ExtResource( 12 )]
-
-goal_texture = ExtResource( 14 )
-max_needed = 3
-goal_string = "Pink"
-
-[connection signal="check_goal" from="Grid" to="GoalHolder" method="_on_Grid_check_goal"]
+[node name="GameWinScreen" parent="." index="14" instance=ExtResource( 14 )]
 
 [connection signal="check_goal" from="Grid" to="TopUI" method="_on_Grid_check_goal"]
+
+[connection signal="check_goal" from="Grid" to="GoalHolder" method="_on_Grid_check_goal"]
 
 [connection signal="create_concrete" from="Grid" to="ConcreteHolder" method="_on_Grid_create_concrete"]
 
@@ -183,6 +180,10 @@ goal_string = "Pink"
 
 [connection signal="timeout" from="Grid/Timer" to="Grid" method="_on_Timer_timeout"]
 
+[connection signal="break_ice" from="IceHolder" to="TopUI" method="_on_IceHolder_break_ice"]
+
+[connection signal="break_ice" from="IceHolder" to="GoalHolder" method="_on_IceHolder_break_ice"]
+
 [connection signal="remove_lock" from="LockHolder" to="Grid" method="_on_LockHolder_remove_lock"]
 
 [connection signal="remove_concrete" from="ConcreteHolder" to="Grid" method="_on_ConcreteHolder_remove_concrete"]
@@ -196,5 +197,9 @@ goal_string = "Pink"
 [connection signal="timeout" from="RefillTimer" to="Grid" method="_on_RefillTimer_timeout"]
 
 [connection signal="create_goal" from="GoalHolder" to="TopUI" method="_on_GoalHolder_create_goal"]
+
+[connection signal="game_won" from="GoalHolder" to="GameWinScreen" method="_on_GoalHolder_game_won"]
+
+[connection signal="game_won" from="GoalHolder" to="Grid" method="_on_GoalHolder_game_won"]
 
 

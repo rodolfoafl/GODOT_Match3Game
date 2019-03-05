@@ -16,7 +16,7 @@
 [ext_resource path="res://Scenes/GameWinScreen.tscn" type="PackedScene" id=14]
 [ext_resource path="res://Scenes/Pause.tscn" type="PackedScene" id=15]
 
-[node name="GameWindow" type="Node2D"]
+[node name="GameWindow" type="Node2D" index="0"]
 
 [node name="Background" type="TextureRect" parent="." index="0"]
 
@@ -60,6 +60,7 @@ ice_spaces = PoolVector2Array( 0, 0, 1, 0, 6, 0, 7, 0, 0, 1, 7, 1, 2, 3, 3, 3, 4
 lock_spaces = PoolVector2Array(  )
 concrete_spaces = PoolVector2Array(  )
 slime_spaces = PoolVector2Array(  )
+preset_spaces = PoolVector3Array( 0, 0, 0, 1, 0, 0, 2, 0, 1, 3, 0, 0, 4, 0, 0, 0, 1, 1, 1, 1, 1, 2, 1, 0, 3, 1, 1, 4, 1, 1 )
 current_counter_value = 30
 is_moves = true
 sinker_piece = ExtResource( 5 )
@@ -141,9 +142,9 @@ goal_string = "Ice"
 
 [connection signal="pause_game" from="BottomUI" to="Pause" method="_on_BottomUI_pause_game"]
 
-[connection signal="check_goal" from="Grid" to="GoalHolder" method="_on_Grid_check_goal"]
-
 [connection signal="check_goal" from="Grid" to="TopUI" method="_on_Grid_check_goal"]
+
+[connection signal="check_goal" from="Grid" to="GoalHolder" method="_on_Grid_check_goal"]
 
 [connection signal="create_concrete" from="Grid" to="ConcreteHolder" method="_on_Grid_create_concrete"]
 
@@ -171,9 +172,9 @@ goal_string = "Ice"
 
 [connection signal="timeout" from="Grid/Timer" to="Grid" method="_on_Timer_timeout"]
 
-[connection signal="break_ice" from="IceHolder" to="GoalHolder" method="_on_IceHolder_break_ice"]
-
 [connection signal="break_ice" from="IceHolder" to="TopUI" method="_on_IceHolder_break_ice"]
+
+[connection signal="break_ice" from="IceHolder" to="GoalHolder" method="_on_IceHolder_break_ice"]
 
 [connection signal="remove_lock" from="LockHolder" to="Grid" method="_on_LockHolder_remove_lock"]
 
@@ -189,8 +190,8 @@ goal_string = "Ice"
 
 [connection signal="create_goal" from="GoalHolder" to="TopUI" method="_on_GoalHolder_create_goal"]
 
-[connection signal="game_won" from="GoalHolder" to="GameWinScreen" method="_on_GoalHolder_game_won"]
-
 [connection signal="game_won" from="GoalHolder" to="Grid" method="_on_GoalHolder_game_won"]
+
+[connection signal="game_won" from="GoalHolder" to="GameWinScreen" method="_on_GoalHolder_game_won"]
 
 

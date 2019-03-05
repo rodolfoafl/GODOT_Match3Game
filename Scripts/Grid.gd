@@ -19,6 +19,8 @@ export (PoolVector2Array) var lock_spaces
 export (PoolVector2Array) var concrete_spaces
 export (PoolVector2Array) var slime_spaces
 
+export (PoolVector3Array) var preset_spaces
+
 export (int) var current_counter_value
 export (bool) var is_moves 
 
@@ -82,6 +84,7 @@ func _ready():
 	state = move
 	randomize()
 	all_pieces = make_2d_array()
+	spawn_preset_pieces()
 	if(sinkers_in_scene):
 		spawn_sinkers(max_sinkers)
 	spawn_pieces()
@@ -129,6 +132,15 @@ func spawn_sinkers(number_to_spawn):
 		all_pieces[column][height - 1] = current
 		current_sinkers += 1
 	pass
+	
+func spawn_preset_pieces():
+	if(preset_spaces.size() > 0):
+		for i in preset_spaces.size():
+			var piece = possible_pieces[preset_spaces[i].z].instance()
+			add_child(piece)
+			piece.position = grid_to_pixel(preset_spaces[i].x, preset_spaces[i].y)
+			all_pieces[preset_spaces[i].x][preset_spaces[i].y] = piece
+	
 	
 func is_piece_sinker(column, row):
 	if(!is_piece_null(column, row)):
@@ -223,6 +235,9 @@ func swap_pieces(column, row, direction):
 	if(first_piece != null && other_piece != null):	
 		if(!restricted_move(Vector2(column, row)) && !restricted_move(Vector2(column, row) + direction)):
 			if(is_color_bomb(first_piece, other_piece)):
+				if(is_piece_sinker(column, row) || is_piece_sinker(column + direction.x, row + direction.y)):
+					swap_back()
+					return
 				if(first_piece.color == "Color" && other_piece.color == "Color"):
 					clear_board()			
 				if(first_piece.color == "Color"):
@@ -253,6 +268,12 @@ func match_color(piece):
 		for j in height:
 			if(!is_piece_null(i, j) && !is_piece_sinker(i, j)):
 				if(all_pieces[i][j].color == piece.color):
+					if(all_pieces[i][j].is_column_bomb):
+						match_all_in_column(i)
+					if(all_pieces[i][j].is_row_bomb):
+						match_all_in_row(j)	
+					if(all_pieces[i][j].is_adjacent_bomb):
+						find_adjacent_pieces(i, j)							
 					match_and_dim(all_pieces[i][j])
 					add_to_array(Vector2(i, j), all_pieces)
 				
@@ -370,6 +391,8 @@ func match_all_in_column(column):
 				match_all_in_row(i)
 			if(all_pieces[column][i].is_adjacent_bomb):
 				find_adjacent_pieces(column, i)
+			if(all_pieces[column][i].is_color_bomb):
+				match_color(all_pieces[column][i])
 			all_pieces[column][i].matched = true
 	
 func match_all_in_row(row):
@@ -379,6 +402,8 @@ func match_all_in_row(row):
 				match_all_in_column(i)
 			if(all_pieces[i][row].is_adjacent_bomb):
 				find_adjacent_pieces(i, row)
+			if(all_pieces[i][row].is_color_bomb):
+				match_color(all_pieces[i][row])
 			all_pieces[i][row].matched = true
 			
 func find_adjacent_pieces(column, row):
@@ -386,10 +411,12 @@ func find_adjacent_pieces(column, row):
 		for j in range(-1, 2):
 			if(is_in_grid(Vector2(column + i, row + j))):
 				if(!is_piece_null(column + i, row + j) && !is_piece_sinker(column + i, row + j)):
-					if(all_pieces[column][row + j].is_column_bomb):
+					if(all_pieces[column + i][row + j].is_column_bomb):
 						match_all_in_column(i)
-					if(all_pieces[column + i][row].is_row_bomb):
+					if(all_pieces[column + i][row + j].is_row_bomb):
 						match_all_in_row(j)
+					if(all_pieces[column + i][row + j].is_color_bomb):
+						match_color(all_pieces[column + i][row + j])
 					all_pieces[column + i][row + j].matched = true
 
 func destroy_sinkers():
@@ -468,40 +495,43 @@ func match_and_dim(item):
 	item.dim()
 
 func find_bombs():
-	for i in current_matches.size():
-		var column_matched = 0
-		var row_matched = 0
-		var current_column = current_matches[i].x
-		var current_row = current_matches[i].y
-		var current_color = all_pieces[current_column][current_row].color
-		for j in current_matches.size():
-			var this_column = current_matches[j].x
-			var this_row = current_matches[j].y
-			var this_color = all_pieces[this_column][this_row].color
-			if(this_column == current_column && this_color == current_color):
-				column_matched += 1
-			if(this_row == current_row && this_color == current_color):
-				row_matched += 1
-				
-		if(column_matched == 4):
-			make_bomb(row_bomb, current_color)
-		if(row_matched == 4):
-			make_bomb(column_bomb, current_color)
-		if(column_matched == 3 && row_matched == 3):
-			make_bomb(adjacent_bomb, current_color)
-		if(column_matched == 5 || row_matched == 5):
-			make_bomb(color_bomb, current_color)
+	if !color_bomb_used:
+		for i in current_matches.size():
+			var column_matched = 0
+			var row_matched = 0
+			var current_column = current_matches[i].x
+			var current_row = current_matches[i].y
+			var current_color = all_pieces[current_column][current_row].color
+			for j in current_matches.size():
+				var this_column = current_matches[j].x
+				var this_row = current_matches[j].y
+				var this_color = all_pieces[this_column][this_row].color
+				if(this_column == current_column && this_color == current_color):
+					column_matched += 1
+				if(this_row == current_row && this_color == current_color):
+					row_matched += 1
+					
+			if(column_matched == 4):
+				make_bomb(row_bomb, current_color)
+			elif(row_matched == 4):
+				make_bomb(column_bomb, current_color)
+			elif(column_matched >= 3 && row_matched >= 3):
+				make_bomb(adjacent_bomb, current_color)
+			elif(column_matched == 5 || row_matched == 5):
+				make_bomb(color_bomb, current_color)
 
 func make_bomb(bomb_type, color):
-	# CURRENTLY, ONLY WHEN THE PLAYER SWAP PIECES BOMBS ARE CREATED.
-	# IDEALLY, IT SHOULD ALSO HAPPEN WHEN THE GRIND REFILLS ITSELF.
 	for i in current_matches.size():
 		var current_column = current_matches[i].x
 		var current_row = current_matches[i].y
 		if(all_pieces[current_column][current_row] == piece_one && piece_one.color == color):
+			damage_special(current_column, current_row)
+			emit_signal("check_goal", piece_one.color)
 			piece_one.matched = false
 			change_bomb(bomb_type, piece_one)
 		if(all_pieces[current_column][current_row] == piece_two && piece_two.color == color):
+			damage_special(current_column, current_row)
+			emit_signal("check_goal", piece_two.color)
 			piece_two.matched = false
 			change_bomb(bomb_type, piece_two)
 			

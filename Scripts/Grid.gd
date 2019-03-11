@@ -54,6 +54,7 @@ var possible_pieces = [
 ]
 var all_pieces = []
 var current_matches = []
+var clone_array = []
 
 var animated_effect = preload("res://Scenes/ExplosionEffect.tscn")
 var particle_effect = preload("res://Scenes/Particle.tscn")
@@ -84,6 +85,7 @@ func _ready():
 	state = move
 	randomize()
 	all_pieces = make_2d_array()
+	clone_array = make_2d_array()
 	spawn_preset_pieces()
 	if(sinkers_in_scene):
 		spawn_sinkers(max_sinkers)
@@ -106,20 +108,24 @@ func _process(delta):
 		touch_input()
 	
 func spawn_ice_obstacles():
-	for i in ice_spaces.size():
-		emit_signal("create_ice", ice_spaces[i])
+	if(ice_spaces != null):
+		for i in ice_spaces.size():
+			emit_signal("create_ice", ice_spaces[i])
 		
 func spawn_lock_obstacles():
-	for i in lock_spaces.size():
-		emit_signal("create_lock", lock_spaces[i])
+	if(lock_spaces != null):
+		for i in lock_spaces.size():
+			emit_signal("create_lock", lock_spaces[i])
 		
 func spawn_concrete_obstacles():
-	for i in concrete_spaces.size():
-		emit_signal("create_concrete", concrete_spaces[i])
+	if(concrete_spaces != null):
+		for i in concrete_spaces.size():
+			emit_signal("create_concrete", concrete_spaces[i])
 		
 func spawn_slime_obstacles():
-	for i in slime_spaces.size():
-		emit_signal("create_slime", slime_spaces[i])
+	if(slime_spaces != null):
+		for i in slime_spaces.size():
+			emit_signal("create_slime", slime_spaces[i])
 		
 func spawn_sinkers(number_to_spawn):
 	for i in number_to_spawn:
@@ -134,12 +140,13 @@ func spawn_sinkers(number_to_spawn):
 	pass
 	
 func spawn_preset_pieces():
-	if(preset_spaces.size() > 0):
-		for i in preset_spaces.size():
-			var piece = possible_pieces[preset_spaces[i].z].instance()
-			add_child(piece)
-			piece.position = grid_to_pixel(preset_spaces[i].x, preset_spaces[i].y)
-			all_pieces[preset_spaces[i].x][preset_spaces[i].y] = piece
+	if(preset_spaces != null):
+		if(preset_spaces.size() > 0):
+			for i in preset_spaces.size():
+				var piece = possible_pieces[preset_spaces[i].z].instance()
+				add_child(piece)
+				piece.position = grid_to_pixel(preset_spaces[i].x, preset_spaces[i].y)
+				all_pieces[preset_spaces[i].x][preset_spaces[i].y] = piece
 	
 	
 func is_piece_sinker(column, row):
@@ -156,6 +163,39 @@ func make_2d_array():
 			array[i].append(null)
 	return array
 	
+func switch_pieces(place, direction, array):
+	if(is_in_grid(place) && !restricted_fill(place)):
+		if(is_in_grid(place + direction) && !restricted_fill(place + direction)):
+			var holder = array[place.x + direction.x][place.y + direction.y]
+			array[place.x + direction.x][place.y + direction.y] = array[place.x][place.y]
+			array[place.x][place.y] = holder
+
+func switch_and_check(place, direction, array):
+	switch_pieces(place, direction, array)
+	if(find_matches(true, array)):
+		switch_pieces(place, direction, array)
+		return true
+	switch_pieces(place, direction, array)
+	return false
+	
+func is_deadlocked():
+	clone_array = copy_array(all_pieces)
+	for i in width:
+		for j in height:
+			if(switch_and_check(Vector2(i, j), Vector2(1, 0), clone_array)):
+				return false
+			if(switch_and_check(Vector2(i, j), Vector2(0, 1), clone_array)):
+				return false
+	return true
+			
+	
+func copy_array(array_to_copy):
+	var new_array =  make_2d_array()
+	for i in width:
+		for j in height:
+			new_array[i][j] = array_to_copy[i][j]
+	return new_array
+	
 func restricted_fill(place):
 	if(is_in_array(empty_spaces, place)):
 		return true
@@ -171,10 +211,11 @@ func restricted_move(place):
 	return false
 
 func is_in_array(array, item):
-	for i in array.size():
-		if(array[i] == item):
-			return true
-	return false
+	if(array != null):
+		for i in array.size():
+			if(array[i] == item):
+				return true
+		return false
 
 func spawn_pieces():
 	for i in width:
@@ -329,9 +370,6 @@ func after_refill():
 					
 	if(!damaged_slime && !first_round):
 		generate_slime()
-	if(is_deadlocked()):
-		print("Deadlocked!")
-		#shuffle_board()	
 		
 	first_round = false
 	damaged_slime = false
@@ -340,27 +378,31 @@ func after_refill():
 	state = move
 	streak = 1	
 	
+	if(is_deadlocked()):
+		print("deadlocked")
+	
 	if(is_moves):
 		_on_Timer_timeout()
 
 	
 func generate_slime():
-	if(slime_spaces.size() > 0):
-		var slime_made = false
-		var tracker = 0
-		while(!slime_made && tracker < 100):
-			var random_num = floor(rand_range(0, slime_spaces.size()))
-			var current_x = slime_spaces[random_num].x
-			var current_y = slime_spaces[random_num].y
-			var neighbor = find_normal_neighbor(current_x, current_y)
-			if(neighbor != null):
-				all_pieces[neighbor.x][neighbor.y].queue_free()
-				all_pieces[neighbor.x][neighbor.y] = null
-				slime_spaces.append(Vector2(neighbor.x, neighbor.y))
-				emit_signal("create_slime", Vector2(neighbor.x, neighbor.y))
-				slime_made = true
-			tracker += 1
-	pass
+	if(slime_spaces != null):
+		if(slime_spaces.size() > 0):
+			var slime_made = false
+			var tracker = 0
+			while(!slime_made && tracker < 100):
+				var random_num = floor(rand_range(0, slime_spaces.size()))
+				var current_x = slime_spaces[random_num].x
+				var current_y = slime_spaces[random_num].y
+				var neighbor = find_normal_neighbor(current_x, current_y)
+				if(neighbor != null):
+					all_pieces[neighbor.x][neighbor.y].queue_free()
+					all_pieces[neighbor.x][neighbor.y] = null
+					slime_spaces.append(Vector2(neighbor.x, neighbor.y))
+					emit_signal("create_slime", Vector2(neighbor.x, neighbor.y))
+					slime_made = true
+				tracker += 1
+
 
 func find_normal_neighbor(column, row):
 	var possible_neighbor = []
@@ -445,21 +487,27 @@ func is_in_grid(grid_position):
 			return true
 	return false	
 
-func find_matches():
+func find_matches(query = false, array = all_pieces):
 	for i in width:
 		for j in height:
 			#if(!is_piece_null(i, j)):
 			if(!is_piece_sinker(i, j) && !restricted_fill(Vector2(i, j))):
-				var current_color = all_pieces[i][j].color
+				var current_color = array[i][j].color
 				if(i > 0 && i < width - 1):
 					if(!is_piece_null(i - 1, j) && !is_piece_null(i + 1, j)):
-						if(all_pieces[i - 1][j].color == current_color && all_pieces[i + 1][j].color == current_color):
-							match_in_axis(i, j, all_pieces, "h")
+						if(array[i - 1][j].color == current_color && array[i + 1][j].color == current_color):
+							if(query):
+								return true
+							match_in_axis(i, j, array, "h")
 				if(j > 0 && j < height - 1):
 					if(!is_piece_null(i, j - 1) && !is_piece_null(i, j + 1)):
-						if(all_pieces[i][j - 1].color == current_color && all_pieces[i][j + 1].color == current_color):
-							match_in_axis(i, j, all_pieces, "v")
-											
+						if(array[i][j - 1].color == current_color && array[i][j + 1].color == current_color):
+							if(query):
+								return true
+							match_in_axis(i, j, array, "v")
+				
+	if(query):
+		return false							
 	get_bombed_pieces()
 	get_parent().get_node("DestroyTimer").start()
 	
@@ -622,56 +670,7 @@ func remove_from_array(array, item):
 		if(array[i] == item):
 			array.remove(i)
 	return array	
-	
-func switch_pieces(column, row, direction):
-	var holder = all_pieces[column + direction.x][row + direction.y]
-	all_pieces[column + direction.x][row + direction.y] = all_pieces[column][row]
-	all_pieces[column][row] = holder
-
-func is_deadlocked():
-	for i in width:
-		for j in height:
-			if(!is_piece_null(i, j)):
-				if(i < width - 1):
-					if(switch_and_check(i, j, Vector2(1, 0))):
-						return false
-				if(j < height - 1):
-					if(switch_and_check(i, j, Vector2(0, 1))):
-						return false
-	return true	
-	
-func shuffle_board():
-	pass
-#	var new_grid = []
-#
-#	for i in width:
-#		new_grid.append([])
-#		for j in height:
-#			if(!is_piece_null(i, j)):
-#				new_grid[i].append(all_pieces[i][j])
-#
-#	for i in width:		
-#		for j in height:		
-#			var index = floor(rand_range(0, new_grid.size()))		
-#			var piece = new_grid[index][j]
-#			print("\npiece: " + str(piece))
-#
-#			piece.position = grid_to_pixel(i, j + y_offset)
-#			piece.move(grid_to_pixel(i, j))
-#			all_pieces[i][j] = new_grid[index][j]
-#			new_grid.remove(piece)
-##
-#	if(is_deadlocked()):
-#		shuffle_board()			
-				
-func switch_and_check(column, row, direction):
-	switch_pieces(column, row, direction)
-	if(check_for_matches()):
-		switch_pieces(column, row, direction)
-		return true
-	switch_pieces(column, row, direction)
-	return false
-	
+		
 func check_for_matches():
 	for i in width:
 		for j in height:

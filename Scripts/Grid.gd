@@ -188,6 +188,36 @@ func is_deadlocked():
 				return false
 	return true
 			
+func clear_and_store_board():
+	var holder_array = []
+	for i in width:
+		for j in height:
+			if(!is_piece_null(i, j)):
+				holder_array.append(all_pieces[i][j])
+				all_pieces[i][j] = null
+	return holder_array
+	
+func shuffle_board():
+	var holder_array = clear_and_store_board()	
+	for i in width:
+		for j in height:
+			if(!restricted_fill(Vector2(i, j))):					
+				if(is_piece_null(i, j)):			
+					var rand = floor(rand_range(0, holder_array.size()))
+					var piece = holder_array[rand]
+					var loops = 0
+					while(match_at(i, j, piece.color) && loops < 100):
+						rand = floor(rand_range(0, holder_array.size()))
+						loops += 1
+						piece = holder_array[rand]			
+					
+					piece.move(grid_to_pixel(i, j))
+					all_pieces[i][j] = piece
+					holder_array.remove(rand)
+	if (is_deadlocked()):
+		shuffle_board()
+	state = move
+			
 	
 func copy_array(array_to_copy):
 	var new_array =  make_2d_array()
@@ -231,9 +261,11 @@ func spawn_pieces():
 						piece = possible_pieces[rand].instance()			
 					
 					add_child(piece)
-					piece.position = grid_to_pixel(i, j + y_offset)
+					#piece.position = grid_to_pixel(i, j)
 					piece.move(grid_to_pixel(i, j))
 					all_pieces[i][j] = piece
+	if(is_deadlocked()):
+		shuffle_board()
 	
 func grid_to_pixel(column, row):	
 	var new_x = x_start + offset * column
@@ -379,7 +411,7 @@ func after_refill():
 	streak = 1	
 	
 	if(is_deadlocked()):
-		print("deadlocked")
+		$ShuffleTimer.start()
 	
 	if(is_moves):
 		_on_Timer_timeout()
@@ -721,3 +753,7 @@ func set_game_over():
 
 func _on_GoalHolder_game_won():
 	state = wait
+
+
+func _on_ShuffleTimer_timeout():
+	shuffle_board()

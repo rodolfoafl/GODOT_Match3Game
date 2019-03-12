@@ -47,7 +47,6 @@ _sections_unfolded = [ "Margin", "Rect", "Size Flags" ]
 
 [node name="Grid" type="Node2D" parent="." index="3"]
 
-editor/display_folded = true
 script = ExtResource( 4 )
 width = 4
 height = 4
@@ -74,6 +73,13 @@ piece_value = 10
 process_mode = 1
 wait_time = 1.0
 one_shot = false
+autostart = false
+
+[node name="ShuffleTimer" type="Timer" parent="Grid" index="1"]
+
+process_mode = 1
+wait_time = 0.5
+one_shot = true
 autostart = false
 
 [node name="IceHolder" type="Node2D" parent="." index="4"]
@@ -142,9 +148,9 @@ goal_string = "Ice"
 
 [connection signal="pause_game" from="BottomUI" to="Pause" method="_on_BottomUI_pause_game"]
 
-[connection signal="check_goal" from="Grid" to="GoalHolder" method="_on_Grid_check_goal"]
-
 [connection signal="check_goal" from="Grid" to="TopUI" method="_on_Grid_check_goal"]
+
+[connection signal="check_goal" from="Grid" to="GoalHolder" method="_on_Grid_check_goal"]
 
 [connection signal="create_concrete" from="Grid" to="ConcreteHolder" method="_on_Grid_create_concrete"]
 
@@ -172,9 +178,11 @@ goal_string = "Ice"
 
 [connection signal="timeout" from="Grid/Timer" to="Grid" method="_on_Timer_timeout"]
 
-[connection signal="break_ice" from="IceHolder" to="GoalHolder" method="_on_IceHolder_break_ice"]
+[connection signal="timeout" from="Grid/ShuffleTimer" to="Grid" method="_on_ShuffleTimer_timeout"]
 
 [connection signal="break_ice" from="IceHolder" to="TopUI" method="_on_IceHolder_break_ice"]
+
+[connection signal="break_ice" from="IceHolder" to="GoalHolder" method="_on_IceHolder_break_ice"]
 
 [connection signal="remove_lock" from="LockHolder" to="Grid" method="_on_LockHolder_remove_lock"]
 

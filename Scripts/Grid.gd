@@ -56,6 +56,10 @@ var all_pieces = []
 var current_matches = []
 var clone_array = []
 
+export (PackedScene) var hint_effect
+var hint = null
+var match_color = ""
+
 var animated_effect = preload("res://Scenes/ExplosionEffect.tscn")
 var particle_effect = preload("res://Scenes/Particle.tscn")
 
@@ -266,6 +270,7 @@ func spawn_pieces():
 					all_pieces[i][j] = piece
 	if(is_deadlocked()):
 		shuffle_board()
+	$HintTimer.start()
 	
 func grid_to_pixel(column, row):	
 	var new_x = x_start + offset * column
@@ -295,6 +300,9 @@ func touch_input():
 		if(is_in_grid(pixel_to_grid(get_global_mouse_position().x, get_global_mouse_position().y))):
 			first_touch = pixel_to_grid(get_global_mouse_position().x, get_global_mouse_position().y)
 			controlling = true
+			if(hint != null):
+				hint.queue_free()
+				hint = null
 	if(Input.is_action_just_released("ui_touch")):
 		if(is_in_grid(pixel_to_grid(get_global_mouse_position().x, get_global_mouse_position().y)) && controlling):
 			controlling = false
@@ -369,6 +377,8 @@ func swap_back():
 		swap_pieces(last_place.x, last_place.y, last_direction)
 	state = move
 	move_checked = false
+	
+	$HintTimer.start()
 
 func refill_columns():
 	if(current_sinkers < max_sinkers):
@@ -415,7 +425,7 @@ func after_refill():
 	
 	if(is_moves):
 		_on_Timer_timeout()
-
+	$HintTimer.start()
 	
 func generate_slime():
 	if(slime_spaces != null):
@@ -529,12 +539,14 @@ func find_matches(query = false, array = all_pieces):
 					if(!is_piece_null(i - 1, j) && !is_piece_null(i + 1, j)):
 						if(array[i - 1][j].color == current_color && array[i + 1][j].color == current_color):
 							if(query):
+								match_color = current_color
 								return true
 							match_in_axis(i, j, array, "h")
 				if(j > 0 && j < height - 1):
 					if(!is_piece_null(i, j - 1) && !is_piece_null(i, j + 1)):
 						if(array[i][j - 1].color == current_color && array[i][j + 1].color == current_color):
 							if(query):
+								match_color = current_color
 								return true
 							match_in_axis(i, j, array, "v")
 				
@@ -718,6 +730,39 @@ func check_for_matches():
 	
 	return false
 	
+func find_all_matches():
+	var hint_holder = []
+	clone_array = copy_array(all_pieces)
+	for i in width:
+		for j in height:
+			if(clone_array[i][j] != null):
+				if(switch_and_check(Vector2(i, j), Vector2(1, 0), clone_array)):
+					if(match_color != ""):
+						if(match_color == clone_array[i][j].color):
+							hint_holder.append(clone_array[i][j])
+						else:
+							hint_holder.append(clone_array[i + 1][j])
+				if(switch_and_check(Vector2(i, j), Vector2(0, 1), clone_array)):
+					if(match_color != ""):
+						if(match_color == clone_array[i][j].color):
+							hint_holder.append(clone_array[i][j])
+						else:
+							hint_holder.append(clone_array[i][j + 1])
+	return hint_holder
+
+func generate_hint():
+	if(hint != null):
+		hint.queue_free()
+		hint = null
+	var hints = find_all_matches()
+	if(hints != null):
+		var rand = floor(rand_range(0, hints.size()))
+		hint = hint_effect.instance()
+		add_child(hint)
+		hint.position = hints[rand].position
+		hint.setup(hints[rand].get_node("Sprite").texture)
+
+	
 func _on_DestroyTimer_timeout():
 	destroy_matched()
 
@@ -757,3 +802,7 @@ func _on_GoalHolder_game_won():
 
 func _on_ShuffleTimer_timeout():
 	shuffle_board()
+
+
+func _on_HintTimer_timeout():
+	generate_hint()

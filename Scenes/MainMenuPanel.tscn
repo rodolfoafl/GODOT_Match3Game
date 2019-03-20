@@ -5,7 +5,6 @@
 [ext_resource path="res://Art/UI/Play Button.png" type="Texture" id=3]
 [ext_resource path="res://Art/UI/Settings Button.png" type="Texture" id=4]
 
-
 [node name="Main" instance=ExtResource( 1 )]
 
 script = ExtResource( 2 )

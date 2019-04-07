@@ -805,4 +805,5 @@ func _on_ShuffleTimer_timeout():
 
 
 func _on_HintTimer_timeout():
-	generate_hint()
+	if(state != wait):
+		generate_hint()

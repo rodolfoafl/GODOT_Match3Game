@@ -15,4 +15,4 @@ func _on_Settings_back_pressed():
 
 
 func _on_Main_play_pressed():
-	get_tree().change_scene("res://Scenes/GameWindow.tscn")
+	get_tree().change_scene("res://Scenes/LevelSelect.tscn")

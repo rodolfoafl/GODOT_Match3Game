@@ -21,17 +21,26 @@ stretch_mode = 0
 [node name="LevelButton" parent="." index="0" instance=ExtResource( 2 )]
 
 position = Vector2( 115.52, 336.632 )
+level = 1
+level_to_load = "res://Scenes/Level_1.tscn"
+enabled = true
 
 [node name="LevelButton2" parent="." index="1" instance=ExtResource( 2 )]
 
 position = Vector2( 325.802, 111.91 )
+level = 2
+enabled = false
 
 [node name="LevelButton3" parent="." index="2" instance=ExtResource( 2 )]
 
 position = Vector2( 527.059, 315.874 )
+level = 3
+enabled = false
 
 [node name="LevelButton4" parent="." index="3" instance=ExtResource( 2 )]
 
 position = Vector2( 315.874, 460.274 )
+level = 4
+enabled = false
 
 

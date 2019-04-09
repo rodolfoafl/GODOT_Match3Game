@@ -8,10 +8,8 @@
 [node name="Settings" instance=ExtResource( 1 )]
 
 script = ExtResource( 2 )
-
-[node name="MarginContainer" parent="." index="0"]
-
-editor/display_folded = false
+sound_on_texture = null
+sound_off_texture = null
 
 [node name="Graphic" parent="MarginContainer/VBoxContainer" index="0"]
 

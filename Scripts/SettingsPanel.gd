@@ -3,9 +3,23 @@ extends "res://Scripts/BaseMenuPanel.gd"
 signal sound_changed;
 signal back_pressed;
 
-func _on_Button1_pressed():
-	emit_signal("sound_changed")
+export (Texture) var sound_on_texture
+export (Texture) var sound_off_texture
 
+func _ready():
+	change_sound_texture()
+
+func _on_Button1_pressed():
+	ConfigManager.sound_on = !ConfigManager.sound_on
+	change_sound_texture()
+	ConfigManager.save_config()
+
+func change_sound_texture():
+	if ConfigManager.sound_on:
+		$MarginContainer/VBoxContainer/Buttons/Button1.texture_normal = sound_on_texture
+	else:
+		$MarginContainer/VBoxContainer/Buttons/Button1.texture_normal = sound_off_texture
 
 func _on_Button2_pressed():
 	emit_signal("back_pressed")
+

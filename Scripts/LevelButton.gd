@@ -17,6 +17,10 @@ onready var button = $TextureButton
 onready var star = $Sprite
 
 func _ready():
+	if GameDataManager.level_info.has(level):
+		enabled = GameDataManager.level_info[level]["unlocked"]
+	else:
+		enabled = false
 	setup()
 
 func setup():

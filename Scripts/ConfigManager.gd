@@ -16,6 +16,7 @@ func save_config():
 	var err = config.save(path)
 	if err != OK:
 		print("An error occured while trying to save the config file!")
+		return
 	else:
 		print("Successfully saved!")
 	

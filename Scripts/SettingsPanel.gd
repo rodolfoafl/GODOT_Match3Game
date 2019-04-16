@@ -13,6 +13,8 @@ func _on_Button1_pressed():
 	ConfigManager.sound_on = !ConfigManager.sound_on
 	change_sound_texture()
 	ConfigManager.save_config()
+	SoundManager.set_volume()
+	SoundManager.play_fixed_sound(0)
 
 func change_sound_texture():
 	if ConfigManager.sound_on:
@@ -21,5 +23,6 @@ func change_sound_texture():
 		$MarginContainer/VBoxContainer/Buttons/Button1.texture_normal = sound_off_texture
 
 func _on_Button2_pressed():
+	SoundManager.play_fixed_sound(0)
 	emit_signal("back_pressed")
 

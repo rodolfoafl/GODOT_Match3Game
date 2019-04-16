@@ -34,8 +34,9 @@ signal damage_slime
 signal create_slime
 
 signal update_counter
-
 signal game_over
+signal play_sound
+signal place_camera
 
 var color_bomb_used = false
 
@@ -83,11 +84,10 @@ export (int) var max_score
 export (int) var piece_value
 var streak = 1
 
-var audio_player
-
 func _ready():
 	state = move
 	randomize()
+	move_camera()
 	all_pieces = make_2d_array()
 	clone_array = make_2d_array()
 	spawn_preset_pieces()
@@ -104,8 +104,9 @@ func _ready():
 	if(!is_moves):
 		$Timer.start()
 	
-	audio_player = get_parent().get_node("AudioPlayer")
-	audio_player.stream = load("res://SFX/piece_matched.ogg")
+func move_camera():
+	var new_position = Vector2(grid_to_pixel(width / 2 - 0.5, height / 2 - 0.5))
+	emit_signal("place_camera", new_position)	
 	
 func _process(delta):
 	if(state == move):
@@ -643,7 +644,6 @@ func destroy_matched():
 		for j in height:
 			if(!is_piece_null(i, j)):
 				if(all_pieces[i][j].matched):
-					audio_player.play()
 					emit_signal("check_goal", all_pieces[i][j].color)					
 					damage_special(i, j)
 					was_matched = true
@@ -652,6 +652,7 @@ func destroy_matched():
 					create_effect(particle_effect, i, j)
 					create_effect(animated_effect, i, j)
 					emit_signal("update_score", piece_value * streak)
+					emit_signal("play_sound")
 	move_checked = true
 	if(was_matched):
 		destroy_hint()

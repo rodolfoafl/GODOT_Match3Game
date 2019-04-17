@@ -37,6 +37,7 @@ signal update_counter
 signal game_over
 signal play_sound
 signal place_camera
+signal camera_effect
 
 var color_bomb_used = false
 
@@ -653,6 +654,7 @@ func destroy_matched():
 					create_effect(animated_effect, i, j)
 					emit_signal("update_score", piece_value * streak)
 					emit_signal("play_sound")
+					call_camera_effect()
 	move_checked = true
 	if(was_matched):
 		destroy_hint()
@@ -765,6 +767,8 @@ func destroy_hint():
 		hint.queue_free()
 		hint = null
 
+func call_camera_effect():
+	emit_signal("camera_effect")
 	
 func _on_DestroyTimer_timeout():
 	destroy_matched()

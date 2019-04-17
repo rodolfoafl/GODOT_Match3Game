@@ -17,7 +17,7 @@
 [ext_resource path="res://Scenes/GameWinScreen.tscn" type="PackedScene" id=15]
 [ext_resource path="res://Scenes/Pause.tscn" type="PackedScene" id=16]
 [ext_resource path="res://Scripts/SoundPlayer.gd" type="Script" id=17]
-[ext_resource path="res://Scripts/Camera2D.gd" type="Script" id=18]
+[ext_resource path="res://Scenes/Camera2D.tscn" type="PackedScene" id=18]
 
 [node name="GameWindow" type="Node2D" index="0"]
 
@@ -155,33 +155,11 @@ goal_string = "Ice"
 
 script = ExtResource( 17 )
 
-[node name="Camera2D" type="Camera2D" parent="." index="14"]
-
-anchor_mode = 1
-rotating = false
-current = true
-zoom = Vector2( 1, 1 )
-limit_left = -10000000
-limit_top = -10000000
-limit_right = 10000000
-limit_bottom = 10000000
-limit_smoothed = false
-drag_margin_h_enabled = true
-drag_margin_v_enabled = true
-smoothing_enabled = false
-smoothing_speed = 5.0
-offset_v = 0.0
-offset_h = 0.0
-drag_margin_left = 0.2
-drag_margin_top = 0.2
-drag_margin_right = 0.2
-drag_margin_bottom = 0.2
-editor_draw_screen = true
-editor_draw_limits = false
-editor_draw_drag_margin = false
-script = ExtResource( 18 )
+[node name="Camera2D" parent="." index="14" instance=ExtResource( 18 )]
 
 [connection signal="pause_game" from="CanvasLayer2/BottomUI" to="Pause" method="_on_BottomUI_pause_game"]
+
+[connection signal="camera_effect" from="Grid" to="Camera2D" method="_on_Grid_camera_effect"]
 
 [connection signal="check_goal" from="Grid" to="CanvasLayer2/TopUI" method="_on_Grid_check_goal"]
 
@@ -237,8 +215,8 @@ script = ExtResource( 18 )
 
 [connection signal="create_goal" from="GoalHolder" to="CanvasLayer2/TopUI" method="_on_GoalHolder_create_goal"]
 
-[connection signal="game_won" from="GoalHolder" to="GameWinScreen" method="_on_GoalHolder_game_won"]
-
 [connection signal="game_won" from="GoalHolder" to="Grid" method="_on_GoalHolder_game_won"]
+
+[connection signal="game_won" from="GoalHolder" to="GameWinScreen" method="_on_GoalHolder_game_won"]
 
 

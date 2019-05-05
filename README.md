@@ -1,1 +1,4 @@
-GODOT_Game_Match3
+Godot: CandyCrush-like Game
+====
+
+Project developed to improve my knowledge in Godot

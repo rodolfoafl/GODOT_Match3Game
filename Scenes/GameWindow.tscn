@@ -19,11 +19,10 @@
 [ext_resource path="res://Scripts/SoundPlayer.gd" type="Script" id=17]
 [ext_resource path="res://Scenes/Camera2D.tscn" type="PackedScene" id=18]
 
-[node name="GameWindow" type="Node2D" index="0"]
+[node name="GameWindow" type="Node2D"]
 
 [node name="CanvasLayer2" type="CanvasLayer" parent="." index="0"]
 
-editor/display_folded = true
 layer = -1
 offset = Vector2( 0, 0 )
 rotation = 0.0
@@ -161,9 +160,9 @@ script = ExtResource( 17 )
 
 [connection signal="camera_effect" from="Grid" to="Camera2D" method="_on_Grid_camera_effect"]
 
-[connection signal="check_goal" from="Grid" to="CanvasLayer2/TopUI" method="_on_Grid_check_goal"]
-
 [connection signal="check_goal" from="Grid" to="GoalHolder" method="_on_Grid_check_goal"]
+
+[connection signal="check_goal" from="Grid" to="CanvasLayer2/TopUI" method="_on_Grid_check_goal"]
 
 [connection signal="create_concrete" from="Grid" to="ConcreteHolder" method="_on_Grid_create_concrete"]
 
@@ -197,9 +196,9 @@ script = ExtResource( 17 )
 
 [connection signal="timeout" from="Grid/HintTimer" to="Grid" method="_on_HintTimer_timeout"]
 
-[connection signal="break_ice" from="IceHolder" to="CanvasLayer2/TopUI" method="_on_IceHolder_break_ice"]
-
 [connection signal="break_ice" from="IceHolder" to="GoalHolder" method="_on_IceHolder_break_ice"]
+
+[connection signal="break_ice" from="IceHolder" to="CanvasLayer2/TopUI" method="_on_IceHolder_break_ice"]
 
 [connection signal="remove_lock" from="LockHolder" to="Grid" method="_on_LockHolder_remove_lock"]
 

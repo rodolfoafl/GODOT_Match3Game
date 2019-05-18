@@ -1,12 +1,14 @@
-[gd_scene load_steps=8 format=2]
+[gd_scene load_steps=10 format=2]
 
 [ext_resource path="res://Art/UI/Bottom UI v 2.png" type="Texture" id=1]
 [ext_resource path="res://Scripts/BottomUI.gd" type="Script" id=2]
-[ext_resource path="res://Art/UI/Buttons/Pause Button.png" type="Texture" id=3]
-[ext_resource path="res://Art/UI/Buttons/Make Color Bomb Button.png" type="Texture" id=4]
-[ext_resource path="res://Art/UI/Buttons/Button Template Orange.png" type="Texture" id=5]
-[ext_resource path="res://Art/UI/Buttons/Mallet Button.png" type="Texture" id=6]
-[ext_resource path="res://Art/UI/Buttons/Plus 5 Moves Button.png" type="Texture" id=7]
+[ext_resource path="res://Scripts/BoosterManager.gd" type="Script" id=3]
+[ext_resource path="res://Art/UI/Buttons/Pause Button.png" type="Texture" id=4]
+[ext_resource path="res://Art/UI/Buttons/Make Color Bomb Button.png" type="Texture" id=5]
+[ext_resource path="res://Art/UI/Buttons/Button Template Orange.png" type="Texture" id=6]
+[ext_resource path="res://Scripts/Booster.gd" type="Script" id=7]
+[ext_resource path="res://Art/UI/Buttons/Mallet Button.png" type="Texture" id=8]
+[ext_resource path="res://Art/UI/Buttons/Plus 5 Moves Button.png" type="Texture" id=9]
 
 [node name="BottomUI" type="TextureRect" index="0"]
 
@@ -66,6 +68,7 @@ size_flags_horizontal = 1
 size_flags_vertical = 1
 custom_constants/separation = 36
 alignment = 1
+script = ExtResource( 3 )
 _sections_unfolded = [ "Margin", "custom_constants" ]
 
 [node name="PauseButton" type="TextureButton" parent="MarginContainer/HBoxContainer" index="0"]
@@ -89,12 +92,14 @@ toggle_mode = false
 enabled_focus_mode = 2
 shortcut = null
 group = null
-texture_normal = ExtResource( 3 )
+texture_normal = ExtResource( 4 )
 expand = true
 stretch_mode = 5
 _sections_unfolded = [ "Textures" ]
 
-[node name="Booster1Button" type="TextureButton" parent="MarginContainer/HBoxContainer" index="1"]
+[node name="Booster1Button" type="TextureButton" parent="MarginContainer/HBoxContainer" index="1" groups=[
+"Boosters",
+]]
 
 anchor_left = 0.0
 anchor_top = 0.0
@@ -111,17 +116,21 @@ mouse_filter = 0
 mouse_default_cursor_shape = 0
 size_flags_horizontal = 1
 size_flags_vertical = 1
-disabled = true
 toggle_mode = false
 enabled_focus_mode = 2
 shortcut = null
 group = null
-texture_normal = ExtResource( 4 )
-texture_disabled = ExtResource( 5 )
+texture_normal = ExtResource( 5 )
+texture_disabled = ExtResource( 6 )
 expand = true
 stretch_mode = 5
+script = ExtResource( 7 )
+_sections_unfolded = [ "Textures" ]
+active_texture = null
 
-[node name="Booster2Button" type="TextureButton" parent="MarginContainer/HBoxContainer" index="2"]
+[node name="Booster2Button" type="TextureButton" parent="MarginContainer/HBoxContainer" index="2" groups=[
+"Boosters",
+]]
 
 anchor_left = 0.0
 anchor_top = 0.0
@@ -138,17 +147,20 @@ mouse_filter = 0
 mouse_default_cursor_shape = 0
 size_flags_horizontal = 1
 size_flags_vertical = 1
-disabled = true
 toggle_mode = false
 enabled_focus_mode = 2
 shortcut = null
 group = null
-texture_normal = ExtResource( 6 )
-texture_disabled = ExtResource( 5 )
+texture_normal = ExtResource( 8 )
+texture_disabled = ExtResource( 6 )
 expand = true
 stretch_mode = 5
+script = ExtResource( 7 )
+active_texture = null
 
-[node name="Booster3Button" type="TextureButton" parent="MarginContainer/HBoxContainer" index="3"]
+[node name="Booster3Button" type="TextureButton" parent="MarginContainer/HBoxContainer" index="3" groups=[
+"Boosters",
+]]
 
 anchor_left = 0.0
 anchor_top = 0.0
@@ -165,15 +177,16 @@ mouse_filter = 0
 mouse_default_cursor_shape = 0
 size_flags_horizontal = 1
 size_flags_vertical = 1
-disabled = true
 toggle_mode = false
 enabled_focus_mode = 2
 shortcut = null
 group = null
-texture_normal = ExtResource( 7 )
-texture_disabled = ExtResource( 5 )
+texture_normal = ExtResource( 9 )
+texture_disabled = ExtResource( 6 )
 expand = true
 stretch_mode = 5
+script = ExtResource( 7 )
+active_texture = null
 
 [connection signal="pressed" from="MarginContainer/HBoxContainer/PauseButton" to="." method="_on_PauseButton_pressed"]
 

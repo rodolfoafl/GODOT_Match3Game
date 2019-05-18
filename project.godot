@@ -19,6 +19,7 @@ config/icon="res://icon.png"
 ConfigManager="*res://Scripts/ConfigManager.gd"
 GameDataManager="*res://Scripts/GameDataManager.gd"
 SoundManager="*res://Scripts/SoundManager.gd"
+BoosterInfo="*res://Scripts/BoosterInfo.gd"
 
 [display]
 

@@ -1,6 +1,6 @@
 extends Node2D
 
-enum {wait, move, win}
+enum {wait, move, win, booster}
 enum {column_bomb, row_bomb, adjacent_bomb, color_bomb}
 var state
 
@@ -81,9 +81,13 @@ var controlling = false
 signal update_score
 signal setup_max_score
 signal check_goal
+
 export (int) var max_score
 export (int) var piece_value
+
 var streak = 1
+
+var booster_type
 
 func _ready():
 	state = move
@@ -112,6 +116,8 @@ func move_camera():
 func _process(delta):
 	if(state == move):
 		touch_input()
+	elif(state == booster):
+		booster_input()
 	
 func spawn_ice_obstacles():
 	if(ice_spaces != null):
@@ -767,6 +773,15 @@ func destroy_hint():
 		hint.queue_free()
 		hint = null
 
+func booster_input():
+	if(Input.is_action_just_pressed("ui_touch")):
+		var mouse_pos = pixel_to_grid(get_global_mouse_position().x, get_global_mouse_position().y)
+		if(is_in_grid(mouse_pos)):
+			if(all_pieces[mouse_pos.x][mouse_pos.y] != null):
+				change_bomb(color_bomb, all_pieces[mouse_pos.x][mouse_pos.y])
+				state = move
+	pass
+
 func call_camera_effect():
 	emit_signal("camera_effect")
 	
@@ -809,11 +824,16 @@ func set_game_over():
 func _on_GoalHolder_game_won():
 	state = win
 
-
 func _on_ShuffleTimer_timeout():
 	shuffle_board()
-
 
 func _on_HintTimer_timeout():
 	if(state != wait):
 		generate_hint()
+
+func _on_BottomUI_booster_pressed(type):
+	if(state == move):
+		state = booster		
+		booster_type = type
+	elif(state == booster):
+		state = move

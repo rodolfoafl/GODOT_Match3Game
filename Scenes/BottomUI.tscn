@@ -1,4 +1,4 @@
-[gd_scene load_steps=10 format=2]
+[gd_scene load_steps=11 format=2]
 
 [ext_resource path="res://Art/UI/Bottom UI v 2.png" type="Texture" id=1]
 [ext_resource path="res://Scripts/BottomUI.gd" type="Script" id=2]
@@ -7,10 +7,11 @@
 [ext_resource path="res://Art/UI/Buttons/Make Color Bomb Button.png" type="Texture" id=5]
 [ext_resource path="res://Art/UI/Buttons/Button Template Orange.png" type="Texture" id=6]
 [ext_resource path="res://Scripts/Booster.gd" type="Script" id=7]
-[ext_resource path="res://Art/UI/Buttons/Mallet Button.png" type="Texture" id=8]
-[ext_resource path="res://Art/UI/Buttons/Plus 5 Moves Button.png" type="Texture" id=9]
+[ext_resource path="res://Art/UI/Buttons/Plus Ten Seconds Button.png" type="Texture" id=8]
+[ext_resource path="res://Art/UI/Buttons/Mallet Button.png" type="Texture" id=9]
+[ext_resource path="res://Art/UI/Buttons/Plus 5 Moves Button.png" type="Texture" id=10]
 
-[node name="BottomUI" type="TextureRect" index="0"]
+[node name="BottomUI" type="TextureRect"]
 
 anchor_left = 0.0
 anchor_top = 0.0
@@ -126,7 +127,9 @@ expand = true
 stretch_mode = 5
 script = ExtResource( 7 )
 _sections_unfolded = [ "Textures" ]
-active_texture = null
+color_bomb_texture = ExtResource( 5 )
+add_counter_texture = ExtResource( 8 )
+destroy_piece_texture = ExtResource( 9 )
 
 [node name="Booster2Button" type="TextureButton" parent="MarginContainer/HBoxContainer" index="2" groups=[
 "Boosters",
@@ -151,12 +154,14 @@ toggle_mode = false
 enabled_focus_mode = 2
 shortcut = null
 group = null
-texture_normal = ExtResource( 8 )
+texture_normal = ExtResource( 9 )
 texture_disabled = ExtResource( 6 )
 expand = true
 stretch_mode = 5
 script = ExtResource( 7 )
-active_texture = null
+color_bomb_texture = ExtResource( 5 )
+add_counter_texture = ExtResource( 8 )
+destroy_piece_texture = ExtResource( 9 )
 
 [node name="Booster3Button" type="TextureButton" parent="MarginContainer/HBoxContainer" index="3" groups=[
 "Boosters",
@@ -181,13 +186,21 @@ toggle_mode = false
 enabled_focus_mode = 2
 shortcut = null
 group = null
-texture_normal = ExtResource( 9 )
+texture_normal = ExtResource( 10 )
 texture_disabled = ExtResource( 6 )
 expand = true
 stretch_mode = 5
 script = ExtResource( 7 )
-active_texture = null
+color_bomb_texture = ExtResource( 5 )
+add_counter_texture = ExtResource( 8 )
+destroy_piece_texture = ExtResource( 9 )
 
 [connection signal="pressed" from="MarginContainer/HBoxContainer/PauseButton" to="." method="_on_PauseButton_pressed"]
+
+[connection signal="pressed" from="MarginContainer/HBoxContainer/Booster1Button" to="." method="_on_Booster1Button_pressed"]
+
+[connection signal="pressed" from="MarginContainer/HBoxContainer/Booster2Button" to="." method="_on_Booster2Button_pressed"]
+
+[connection signal="pressed" from="MarginContainer/HBoxContainer/Booster3Button" to="." method="_on_Booster3Button_pressed"]
 
 

@@ -19,7 +19,7 @@
 [ext_resource path="res://Scripts/SoundPlayer.gd" type="Script" id=17]
 [ext_resource path="res://Scenes/Camera2D.tscn" type="PackedScene" id=18]
 
-[node name="GameWindow" type="Node2D"]
+[node name="GameWindow" type="Node2D" index="0"]
 
 [node name="CanvasLayer2" type="CanvasLayer" parent="." index="0"]
 
@@ -156,13 +156,15 @@ script = ExtResource( 17 )
 
 [node name="Camera2D" parent="." index="14" instance=ExtResource( 18 )]
 
+[connection signal="booster_pressed" from="CanvasLayer2/BottomUI" to="Grid" method="_on_BottomUI_booster_pressed"]
+
 [connection signal="pause_game" from="CanvasLayer2/BottomUI" to="Pause" method="_on_BottomUI_pause_game"]
 
 [connection signal="camera_effect" from="Grid" to="Camera2D" method="_on_Grid_camera_effect"]
 
-[connection signal="check_goal" from="Grid" to="GoalHolder" method="_on_Grid_check_goal"]
-
 [connection signal="check_goal" from="Grid" to="CanvasLayer2/TopUI" method="_on_Grid_check_goal"]
+
+[connection signal="check_goal" from="Grid" to="GoalHolder" method="_on_Grid_check_goal"]
 
 [connection signal="create_concrete" from="Grid" to="ConcreteHolder" method="_on_Grid_create_concrete"]
 
@@ -196,9 +198,9 @@ script = ExtResource( 17 )
 
 [connection signal="timeout" from="Grid/HintTimer" to="Grid" method="_on_HintTimer_timeout"]
 
-[connection signal="break_ice" from="IceHolder" to="GoalHolder" method="_on_IceHolder_break_ice"]
-
 [connection signal="break_ice" from="IceHolder" to="CanvasLayer2/TopUI" method="_on_IceHolder_break_ice"]
+
+[connection signal="break_ice" from="IceHolder" to="GoalHolder" method="_on_IceHolder_break_ice"]
 
 [connection signal="remove_lock" from="LockHolder" to="Grid" method="_on_LockHolder_remove_lock"]
 
@@ -214,8 +216,8 @@ script = ExtResource( 17 )
 
 [connection signal="create_goal" from="GoalHolder" to="CanvasLayer2/TopUI" method="_on_GoalHolder_create_goal"]
 
-[connection signal="game_won" from="GoalHolder" to="Grid" method="_on_GoalHolder_game_won"]
-
 [connection signal="game_won" from="GoalHolder" to="GameWinScreen" method="_on_GoalHolder_game_won"]
+
+[connection signal="game_won" from="GoalHolder" to="Grid" method="_on_GoalHolder_game_won"]
 
 

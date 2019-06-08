@@ -23,6 +23,8 @@ export (PoolVector3Array) var preset_spaces
 
 export (int) var current_counter_value
 export (bool) var is_moves 
+var initial_counter_value
+signal set_max_counter
 
 signal damage_ice
 signal create_ice
@@ -90,6 +92,9 @@ var streak = 1
 var booster_type
 
 func _ready():
+	initial_counter_value = current_counter_value
+	emit_signal("set_max_counter", initial_counter_value)
+	
 	state = move
 	randomize()
 	move_camera()
@@ -775,12 +780,28 @@ func destroy_hint():
 
 func booster_input():
 	if(Input.is_action_just_pressed("ui_touch")):
-		var mouse_pos = pixel_to_grid(get_global_mouse_position().x, get_global_mouse_position().y)
-		if(is_in_grid(mouse_pos)):
-			if(all_pieces[mouse_pos.x][mouse_pos.y] != null):
-				change_bomb(color_bomb, all_pieces[mouse_pos.x][mouse_pos.y])
-				state = move
-	pass
+		if(booster_type == "Color Bomb"):
+			use_color_bomb_booster()
+		elif(booster_type == "Add To Counter"):
+			use_add_to_counter_booster()
+	
+func use_add_to_counter_booster():
+	var mouse_pos = pixel_to_grid(get_global_mouse_position().x, get_global_mouse_position().y)
+	if(is_in_grid(mouse_pos)):	
+		if(is_moves):			
+			emit_signal("update_counter", 5)
+		else:
+			emit_signal("update_counter", 10)
+		state = move
+	
+
+func use_color_bomb_booster():
+	var mouse_pos = pixel_to_grid(get_global_mouse_position().x, get_global_mouse_position().y)
+	if(is_in_grid(mouse_pos)):
+		if(all_pieces[mouse_pos.x][mouse_pos.y] != null):
+			change_bomb(color_bomb, all_pieces[mouse_pos.x][mouse_pos.y])
+			state = move
+
 
 func call_camera_effect():
 	emit_signal("camera_effect")
@@ -837,3 +858,4 @@ func _on_BottomUI_booster_pressed(type):
 		booster_type = type
 	elif(state == booster):
 		state = move
+		booster_type = ""

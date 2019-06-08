@@ -15,7 +15,7 @@ func check_active(is_active, type):
 	if(is_active):
 		if(type == "Color Bomb"):
 			texture_normal = color_bomb_texture
-		elif(type == "Counter Bomb"):
+		elif(type == "Add To Counter"):
 			texture_normal = add_counter_texture
 		elif(type == "Destroy Piece"):
 			texture_normal = destroy_piece_texture

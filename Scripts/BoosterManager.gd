@@ -2,6 +2,7 @@ extends HBoxContainer
 
 func _ready():
 	BoosterInfo.booster_info[1] = "Color Bomb"
+	BoosterInfo.booster_info[2] = "Add To Counter"
 	activate_booster_buttons()
 
 func activate_booster_buttons():

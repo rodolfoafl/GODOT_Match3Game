@@ -188,6 +188,8 @@ script = ExtResource( 17 )
 
 [connection signal="play_sound" from="Grid" to="MusicPlayer" method="_on_Grid_play_sound"]
 
+[connection signal="set_max_counter" from="Grid" to="CanvasLayer2/TopUI" method="_on_Grid_set_max_counter"]
+
 [connection signal="setup_max_score" from="Grid" to="CanvasLayer2/TopUI" method="_on_Grid_setup_max_score"]
 
 [connection signal="update_counter" from="Grid" to="CanvasLayer2/TopUI" method="_on_Grid_update_counter"]
@@ -216,8 +218,8 @@ script = ExtResource( 17 )
 
 [connection signal="create_goal" from="GoalHolder" to="CanvasLayer2/TopUI" method="_on_GoalHolder_create_goal"]
 
-[connection signal="game_won" from="GoalHolder" to="GameWinScreen" method="_on_GoalHolder_game_won"]
-
 [connection signal="game_won" from="GoalHolder" to="Grid" method="_on_GoalHolder_game_won"]
+
+[connection signal="game_won" from="GoalHolder" to="GameWinScreen" method="_on_GoalHolder_game_won"]
 
 

@@ -19,7 +19,7 @@
 [ext_resource path="res://Scripts/SoundPlayer.gd" type="Script" id=17]
 [ext_resource path="res://Scenes/Camera2D.tscn" type="PackedScene" id=18]
 
-[node name="GameWindow" type="Node2D" index="0"]
+[node name="GameWindow" type="Node2D"]
 
 [node name="CanvasLayer2" type="CanvasLayer" parent="." index="0"]
 
@@ -78,7 +78,7 @@ sinker_piece = ExtResource( 5 )
 sinkers_in_scene = false
 max_sinkers = 0
 hint_effect = ExtResource( 6 )
-max_score = 5000
+max_score = 100
 piece_value = 10
 
 [node name="Timer" type="Timer" parent="Grid" index="0"]

@@ -9,6 +9,7 @@ export (PackedScene) var goal_prefab
 
 var current_count = 0
 var current_score = 0 
+var max_counter = 0
 
 func _ready():
 	_on_Grid_update_score(current_score)
@@ -20,6 +21,8 @@ func _on_Grid_update_score(amount_to_change):
 
 func _on_Grid_update_counter(amount_to_change = -1):
 	current_count += amount_to_change
+	if(current_count >= max_counter):
+		current_count = max_counter
 	counter.text = String(current_count)
 	
 func setup_score_bar(max_score):
@@ -48,3 +51,7 @@ func _on_Grid_check_goal(goal_type):
 func _on_IceHolder_break_ice(goal_type):
 	for i in goal_container.get_child_count():
 		goal_container.get_child(i).update_goal_values(goal_type)
+
+
+func _on_Grid_set_max_counter(value):
+	max_counter = value

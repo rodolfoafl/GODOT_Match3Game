@@ -23,7 +23,6 @@
 
 [node name="CanvasLayer2" type="CanvasLayer" parent="." index="0"]
 
-editor/display_folded = true
 layer = -1
 offset = Vector2( 0, 0 )
 rotation = 0.0
@@ -157,6 +156,8 @@ script = ExtResource( 17 )
 
 [node name="Camera2D" parent="." index="14" instance=ExtResource( 18 )]
 
+[connection signal="booster_pressed" from="CanvasLayer2/BottomUI" to="Grid" method="_on_BottomUI_booster_pressed"]
+
 [connection signal="pause_game" from="CanvasLayer2/BottomUI" to="Pause" method="_on_BottomUI_pause_game"]
 
 [connection signal="camera_effect" from="Grid" to="Camera2D" method="_on_Grid_camera_effect"]
@@ -186,6 +187,8 @@ script = ExtResource( 17 )
 [connection signal="place_camera" from="Grid" to="Camera2D" method="_on_Grid_place_camera"]
 
 [connection signal="play_sound" from="Grid" to="MusicPlayer" method="_on_Grid_play_sound"]
+
+[connection signal="set_max_counter" from="Grid" to="CanvasLayer2/TopUI" method="_on_Grid_set_max_counter"]
 
 [connection signal="setup_max_score" from="Grid" to="CanvasLayer2/TopUI" method="_on_Grid_setup_max_score"]
 

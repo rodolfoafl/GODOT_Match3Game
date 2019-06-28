@@ -6,18 +6,26 @@ onready var score_bar = $MarginContainer/HBoxContainer/VBoxContainer/TextureProg
 onready var goal_container = $MarginContainer/HBoxContainer/HBoxContainer
 
 export (PackedScene) var goal_prefab
+export (int) var current_level
+
+signal notify_of_level
 
 var current_count = 0
 var current_score = 0 
 var max_counter = 0
 
 func _ready():
+	emit_signal("notify_of_level", current_level)
 	_on_Grid_update_score(current_score)
 
 func _on_Grid_update_score(amount_to_change):
 	current_score += amount_to_change
 	update_score_bar()
 	score_label.text = String(current_score)
+	if(GameDataManager.level_info.has(current_level)):
+		GameDataManager.level_info[current_level]["high_score"] = current_score
+	if(current_score >= score_bar.max_value):
+		GameDataManager.level_info[current_level]["stars_unlocked"] = 1
 
 func _on_Grid_update_counter(amount_to_change = -1):
 	current_count += amount_to_change

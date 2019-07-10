@@ -15,15 +15,15 @@ _global_script_class_icons={
 
 [application]
 
-config/name="Match3"
-run/main_scene="res://Scenes/GameMenu.tscn"
+config/name="Youtube Match 3"
+run/main_scene="res://Scenes/Game Menu.tscn"
 config/icon="res://icon.png"
 
 [autoload]
 
 ConfigManager="*res://Scripts/ConfigManager.gd"
 GameDataManager="*res://Scripts/GameDataManager.gd"
-SoundManager="*res://Scripts/SoundManager.gd"
+SoundManager="*res://Scenes/SoundManager.tscn"
 BoosterInfo="*res://Scripts/BoosterInfo.gd"
 
 [display]
@@ -32,7 +32,6 @@ window/size/width=576
 window/size/height=1024
 window/size/test_width=432
 window/size/test_height=768
-window/vsync/use_vsync=false
 window/stretch/mode="2d"
 window/stretch/aspect="keep_width"
 window/handheld/emulate_touchscreen=true

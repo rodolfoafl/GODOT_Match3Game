@@ -1,17 +1,17 @@
 [gd_scene load_steps=8 format=2]
 
 [ext_resource path="res://Scripts/LevelButton.gd" type="Script" id=1]
-[ext_resource path="res://Art/UI/Level Select/Red Button.png" type="Texture" id=2]
-[ext_resource path="res://Art/UI/Level Select/Green Button 2.png" type="Texture" id=3]
-[ext_resource path="res://Art/UI/Level Select/Star Filled.png" type="Texture" id=4]
-[ext_resource path="res://Art/UI/Level Select/Star Blank.png" type="Texture" id=5]
+[ext_resource path="res://art/UI/Red Button.png" type="Texture" id=2]
+[ext_resource path="res://art/UI/Green Button 2.png" type="Texture" id=3]
+[ext_resource path="res://art/UI/Star Filled.png" type="Texture" id=4]
+[ext_resource path="res://art/UI/Star Blank.png" type="Texture" id=5]
 [ext_resource path="res://Fonts/Kenney Blocks.ttf" type="DynamicFontData" id=6]
 
 [sub_resource type="DynamicFont" id=1]
 
-size = 46
+size = 50
 use_mipmaps = false
-use_filter = true
+use_filter = false
 font_data = ExtResource( 6 )
 _sections_unfolded = [ "Font", "Settings" ]
 
@@ -20,12 +20,12 @@ _sections_unfolded = [ "Font", "Settings" ]
 script = ExtResource( 1 )
 level = null
 level_to_load = null
+enabled = null
+score_goal_met = null
 blocked_texture = ExtResource( 2 )
 open_texture = ExtResource( 3 )
 goal_met = ExtResource( 4 )
 goal_not_met = ExtResource( 5 )
-enabled = null
-score_goal_met = null
 
 [node name="TextureButton" type="TextureButton" parent="." index="0"]
 
@@ -34,9 +34,9 @@ anchor_top = 0.0
 anchor_right = 0.0
 anchor_bottom = 0.0
 margin_left = -48.0
-margin_top = -48.0
-margin_right = 40.0
-margin_bottom = 40.0
+margin_top = -49.0
+margin_right = 49.0
+margin_bottom = 48.0
 rect_pivot_offset = Vector2( 0, 0 )
 rect_clip_content = false
 focus_mode = 2
@@ -49,7 +49,7 @@ enabled_focus_mode = 2
 shortcut = null
 group = null
 texture_normal = ExtResource( 2 )
-_sections_unfolded = [ "Textures" ]
+_sections_unfolded = [ "Margin", "Textures" ]
 
 [node name="Label" type="Label" parent="TextureButton" index="0"]
 
@@ -57,10 +57,9 @@ anchor_left = 0.0
 anchor_top = 0.0
 anchor_right = 0.0
 anchor_bottom = 0.0
-margin_left = 16.0
-margin_top = 12.0
-margin_right = 78.0
-margin_bottom = 72.0
+margin_left = 21.0
+margin_right = 83.0
+margin_bottom = 76.0
 rect_pivot_offset = Vector2( 0, 0 )
 rect_clip_content = false
 mouse_filter = 2

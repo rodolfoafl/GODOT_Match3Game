@@ -115,7 +115,7 @@ func _ready():
 		$Timer.start()
 	
 func move_camera():
-	var new_position = Vector2(grid_to_pixel(width / 2 - 0.5, height / 2 - 0.5))
+	var new_position = grid_to_pixel(width / 2 - 0.5, height / 2 - 0.5)
 	emit_signal("place_camera", new_position)	
 	
 func _process(delta):

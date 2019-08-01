@@ -787,7 +787,7 @@ func find_all_matches():
 
 func generate_hint():
 	var hints = find_all_matches()
-	if hints != null:
+	if hints != null and state != wait:
 		if hints.size() > 0:
 			destroy_hint()
 			var rand = floor(rand_range(0, hints.size()))

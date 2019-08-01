@@ -8,6 +8,10 @@ onready var goal_label = $VBoxContainer/Label
 onready var this_texture = $VBoxContainer/TextureRect
 
 func set_goal_values(new_max, new_texture, new_value):
+	if(!this_texture):
+		this_texture = $VBoxContainer/TextureRect
+	if(!goal_label):
+		goal_label = $VBoxContainer/Label
 	this_texture.texture = new_texture
 	max_value = new_max
 	goal_value = new_value

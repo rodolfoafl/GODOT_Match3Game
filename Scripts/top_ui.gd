@@ -15,11 +15,10 @@ func _ready():
 
 func make_goal(new_max, new_texture, new_value):
 	var current = goal_prefab.instance()
+	if(!goal_container):
+		goal_container = $MarginContainer/HBoxContainer/HBoxContainer
 	goal_container.add_child(current)
 	current.set_goal_values(new_max, new_texture, new_value)
-
-func _on_GoalHolder_create_goal(new_max, new_texture, new_value):
-	make_goal(new_max, new_texture, new_value)
 
 func _on_grid_check_goal(goal_type):
 	for i in goal_container.get_child_count():
@@ -42,3 +41,6 @@ func _on_GameManager_set_score_info(new_max, new_current):
 	score_bar.max_value = new_max
 	score_bar.value = new_current
 	score_label.text = String(new_current)
+
+func _on_GameManager_create_goal(new_max, new_texture, new_value):
+	make_goal(new_max, new_texture, new_value)

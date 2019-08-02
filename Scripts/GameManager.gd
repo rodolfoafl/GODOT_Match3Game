@@ -3,6 +3,7 @@ extends Node
 # Board Variables
 export (int) var width
 export (int) var height
+var board_stable = true
 
 # Level Variables
 export (int) var level
@@ -45,6 +46,10 @@ func setup():
 	emit_signal("set_counter_info", current_counter)
 	create_goals()
 
+func change_board_state():
+	board_stable = !board_stable
+	check_game_win()
+
 #Goals-related Methods
 func create_goals():
 	for i in goal_holder.get_child_count():
@@ -57,7 +62,7 @@ func check_goals(goal_type):
 	check_game_win()
 
 func check_game_win():
-	if goals_met():
+	if goals_met() and board_stable:
 		emit_signal("game_won")
 		GameDataManager.level_info[level + 1] = {
 			"unlocked": true,
@@ -92,9 +97,11 @@ func update_counter():
 		current_counter = 0
 	emit_signal("set_counter_info", current_counter)
 
-
 func _on_grid_check_goal(goal_type):
 	check_goals(goal_type)
 
 func _on_ice_holder_break_ice(goal_type):
 	check_goals(goal_type)
+
+func _on_grid_change_move_state():
+	change_board_state()

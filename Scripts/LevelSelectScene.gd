@@ -1,13 +1,14 @@
 extends CanvasLayer
 
-# class member variables go here, for example:
-# var a = 2
-# var b = "textvar"
+var scroll_value = 0
 
 func _ready():
-	# Called when the node is added to the scene for the first time.
-	# Initialization here
-	pass
+	yield(get_tree(), "idle_frame")
+	$ScrollContainer.scroll_vertical = GameDataManager.level_scroll_value
 
 func _on_TextureButton_pressed():
 	get_tree().change_scene("res://Scenes/Game Menu.tscn")
+
+func _on_LevelBackdrop_save_scroll_value():
+	var current_scroll_value = $ScrollContainer.scroll_vertical
+	GameDataManager.level_scroll_value = current_scroll_value

@@ -6,13 +6,6 @@ onready var score_bar = $MarginContainer/HBoxContainer/VBoxContainer/TextureProg
 onready var goal_container = $MarginContainer/HBoxContainer/HBoxContainer
 export (PackedScene) var goal_prefab
 
-#signal to the Goal holder to know what level we're on
-signal notify_of_level
-
-func _ready():
-	#emit_signal("notify_of_level", current_level)
-	pass
-
 func make_goal(new_max, new_texture, new_value):
 	var current = goal_prefab.instance()
 	if(!goal_container):

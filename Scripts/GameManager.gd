@@ -23,9 +23,11 @@ signal set_score_info
 signal set_counter_info
 
 var game_won = false
+var game_lost = false
 onready var goal_holder = $GoalHolder
 signal create_goal
 signal game_won
+signal game_lost
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
@@ -77,7 +79,6 @@ func goals_met():
 			return false
 	return true
 
-
 #GameManager signal
 func _on_grid_update_score(streak_value):
 	current_score += streak_value * points_per_piece
@@ -95,6 +96,10 @@ func update_counter():
 	current_counter -= 1
 	if current_counter < 0:
 		current_counter = 0
+		if(!game_lost and board_stable):
+			emit_signal("game_lost")
+			game_lost = true
+			$MoveTimer.one_shot = true
 	emit_signal("set_counter_info", current_counter)
 
 func _on_grid_check_goal(goal_type):

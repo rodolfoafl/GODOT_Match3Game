@@ -31,6 +31,7 @@ anchor_bottom = 0.0
 margin_top = 2048.0
 margin_right = 576.0
 margin_bottom = 4096.0
+script = null
 
 [node name="TextureButton" type="TextureButton" parent="."]
 margin_right = 64.0
@@ -39,4 +40,5 @@ rect_min_size = Vector2( 64, 64 )
 texture_normal = ExtResource( 4 )
 expand = true
 stretch_mode = 5
+[connection signal="save_scroll_value" from="ScrollContainer/VBoxContainer/LevelBackdrop" to="." method="_on_LevelBackdrop_save_scroll_value"]
 [connection signal="pressed" from="TextureButton" to="." method="_on_TextureButton_pressed"]

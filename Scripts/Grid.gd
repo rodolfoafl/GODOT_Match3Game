@@ -70,12 +70,6 @@ var streak = 1
 
 # Counter Variables
 signal update_counter
-"""
-export (int) var current_counter_value = 20
-export(bool) var is_moves
-signal game_over
-signal set_max_counter
-"""
 
 # Goal Check Stuff
 signal check_goal
@@ -864,16 +858,6 @@ func _on_slime_holder_remove_slime(place):
 		if slime_spaces[i] == place:
 			slime_spaces.remove(i)
 
-func declare_game_over():
-	emit_signal("game_over")
-	can_move = false
-	emit_signal("change_move_state")
-
-func _on_GoalHolder_game_won():
-	#state = win
-	can_move = false
-	emit_signal("change_move_state")
-
 func _on_ShuffleTimer_timeout():
 	shuffle_board()
 
@@ -886,3 +870,10 @@ func _on_bottom_ui_booster(booster_type):
 func _on_GameManager_set_dimensions(new_width, new_height):
 	width = new_width
 	height = new_height
+
+func _on_GameManager_game_won():
+	can_move = false
+
+
+func _on_GameManager_game_lost():
+	can_move = false

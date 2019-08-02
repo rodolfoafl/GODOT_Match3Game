@@ -8,6 +8,9 @@ var default_level_info = {
 		"stars unlocked": 0
 		}
 	}
+
+var level_scroll_value = 0	
+
 onready var path = "user://save.dat"
 
 func _ready():
@@ -32,3 +35,6 @@ func load_data():
 	var read = {}
 	read = file.get_var()
 	return read
+	
+func change_level_scroll_value(new_value):
+	level_scroll_value = new_value

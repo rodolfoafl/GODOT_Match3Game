@@ -43,7 +43,6 @@ goal_string = "blue"
 [node name="Camera2D" parent="." instance=ExtResource( 4 )]
 
 [node name="CanvasLayer" type="CanvasLayer" parent="."]
-editor/display_folded = true
 layer = -1
 
 [node name="background" type="TextureRect" parent="CanvasLayer"]
@@ -115,18 +114,20 @@ one_shot = true
 [node name="MusicPlayer" type="Node" parent="."]
 script = ExtResource( 19 )
 [connection signal="create_goal" from="GameManager" to="CanvasLayer/top_ui" method="_on_GameManager_create_goal"]
+[connection signal="game_lost" from="GameManager" to="grid" method="_on_GameManager_game_lost"]
+[connection signal="game_lost" from="GameManager" to="Game Over Panel" method="_on_GameManager_game_lost"]
+[connection signal="game_won" from="GameManager" to="grid" method="_on_GameManager_game_won"]
 [connection signal="game_won" from="GameManager" to="Game Win Screen" method="_on_GameManager_game_won"]
 [connection signal="set_counter_info" from="GameManager" to="CanvasLayer/top_ui" method="_on_GameManager_set_counter_info"]
 [connection signal="set_dimensions" from="GameManager" to="grid" method="_on_GameManager_set_dimensions"]
 [connection signal="set_score_info" from="GameManager" to="CanvasLayer/top_ui" method="_on_GameManager_set_score_info"]
 [connection signal="timeout" from="GameManager/MoveTimer" to="GameManager" method="_on_MoveTimer_timeout"]
-[connection signal="notify_of_level" from="CanvasLayer/top_ui" to="GameManager/GoalHolder" method="_on_top_ui_notify_of_level"]
 [connection signal="booster" from="CanvasLayer/bottom_ui" to="grid" method="_on_bottom_ui_booster"]
 [connection signal="pause_game" from="CanvasLayer/bottom_ui" to="Pause" method="_on_bottom_ui_pause_game"]
 [connection signal="camera_effect" from="grid" to="Camera2D" method="_on_grid_camera_effect"]
 [connection signal="change_move_state" from="grid" to="GameManager" method="_on_grid_change_move_state"]
-[connection signal="check_goal" from="grid" to="CanvasLayer/top_ui" method="_on_grid_check_goal"]
 [connection signal="check_goal" from="grid" to="GameManager" method="_on_grid_check_goal"]
+[connection signal="check_goal" from="grid" to="CanvasLayer/top_ui" method="_on_grid_check_goal"]
 [connection signal="damage_concrete" from="grid" to="concrete_holder" method="_on_grid_damage_concrete"]
 [connection signal="damage_ice" from="grid" to="ice_holder" method="_on_grid_damage_ice"]
 [connection signal="damage_lock" from="grid" to="lock_holder" method="_on_grid_damage_lock"]
@@ -141,8 +142,8 @@ script = ExtResource( 19 )
 [connection signal="update_score" from="grid" to="GameManager" method="_on_grid_update_score"]
 [connection signal="timeout" from="grid/ShuffleTimer" to="grid" method="_on_ShuffleTimer_timeout"]
 [connection signal="timeout" from="grid/HintTimer" to="grid" method="_on_HintTimer_timeout"]
-[connection signal="break_ice" from="ice_holder" to="CanvasLayer/top_ui" method="_on_ice_holder_break_ice"]
 [connection signal="break_ice" from="ice_holder" to="GameManager" method="_on_ice_holder_break_ice"]
+[connection signal="break_ice" from="ice_holder" to="CanvasLayer/top_ui" method="_on_ice_holder_break_ice"]
 [connection signal="remove_lock" from="lock_holder" to="grid" method="_on_lock_holder_remove_lock"]
 [connection signal="remove_concrete" from="concrete_holder" to="grid" method="_on_concrete_holder_remove_concrete"]
 [connection signal="remove_slime" from="slime_holder" to="grid" method="_on_slime_holder_remove_slime"]

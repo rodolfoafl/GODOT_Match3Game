@@ -40,4 +40,5 @@ func setup():
 
 func _on_TextureButton_pressed():
 	if enabled:
+		get_parent().emit_signal("save_scroll_value")
 		get_tree().change_scene(level_to_load)

@@ -21,6 +21,11 @@ export (int) var points_per_piece
 signal set_dimensions
 signal set_score_info
 signal set_counter_info
+signal screen_fade_in
+signal screen_fade_out
+signal grid_change_move
+
+var booster_active = false
 
 var game_won = false
 var game_lost = false
@@ -65,7 +70,7 @@ func check_goals(goal_type):
 
 func check_game_win():
 	if goals_met() and board_stable:
-		emit_signal("game_won")
+		emit_signal("game_won", current_score)
 		GameDataManager.level_info[level + 1] = {
 			"unlocked": true,
 			"high score": 0,
@@ -110,3 +115,13 @@ func _on_ice_holder_break_ice(goal_type):
 
 func _on_grid_change_move_state():
 	change_board_state()
+
+func _on_bottom_ui_booster():
+	if(booster_active && board_stable):
+		emit_signal("screen_fade_out")
+		emit_signal("grid_change_move")		
+		booster_active = false
+	elif(!booster_active && board_stable):
+		emit_signal("screen_fade_in")
+		emit_signal("grid_change_move")			
+		booster_active = true

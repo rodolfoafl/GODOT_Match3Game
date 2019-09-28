@@ -8,7 +8,7 @@ func _on_Pause_pressed():
 	get_tree().paused = true
 
 func _on_Booster1_pressed():
-	emit_signal("booster", $MarginContainer/HBoxContainer/Booster1.type)
+	emit_signal("booster")
 
 func _on_Booster2_pressed():
 	emit_signal("booster", $MarginContainer/HBoxContainer/Booster2.type)

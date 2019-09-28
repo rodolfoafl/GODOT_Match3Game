@@ -874,6 +874,8 @@ func _on_GameManager_set_dimensions(new_width, new_height):
 func _on_GameManager_game_won():
 	can_move = false
 
-
 func _on_GameManager_game_lost():
 	can_move = false
+
+func _on_GameManager_grid_change_move():
+	can_move = !can_move

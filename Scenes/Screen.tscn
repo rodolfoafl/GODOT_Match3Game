@@ -1,0 +1,14 @@
+[gd_scene load_steps=3 format=2]
+
+[ext_resource path="res://art/background 2.png" type="Texture" id=1]
+[ext_resource path="res://Scripts/Screen.gd" type="Script" id=2]
+
+[node name="Screen" type="TextureRect"]
+modulate = Color( 0.352941, 0.321569, 0.321569, 1 )
+margin_top = 7.0
+margin_right = 576.0
+margin_bottom = 1031.0
+texture = ExtResource( 1 )
+script = ExtResource( 2 )
+
+[node name="FadeTween" type="Tween" parent="."]
